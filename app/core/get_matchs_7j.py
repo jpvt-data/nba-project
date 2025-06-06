@@ -7,7 +7,7 @@ from datetime import datetime
 import locale
 
 # 🇫🇷 Pour afficher les dates en français
-locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
+locale.setlocale(locale.LC_TIME, "fr_FR")  # ✅
 
 def get_matchs_7j():
     chemin_csv = "data/matchs_a_venir.csv"
