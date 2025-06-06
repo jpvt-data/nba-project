@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: nba-dashboard
+    env: python
+    plan: free
+    buildCommand: |
+      pip install -r requirements.txt
+      python scripts/build_matchs_a_venir.py
+    startCommand: python app/core/app.py
+    autoDeploy: true

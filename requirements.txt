@@ -1,5 +1,4 @@
 dash
 pandas
 requests
-plotly
-python-dotenv
+nba_api
