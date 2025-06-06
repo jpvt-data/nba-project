@@ -15,7 +15,7 @@ COPY . /app
 
 # 🔧 Installation des dépendances
 RUN pip install --upgrade pip && \
-    pip install dash pandas requests nba_api dash-bootstrap-component
+    pip install dash pandas requests nba_api dash-bootstrap-components
 
 # 🚀 Commande par défaut : lancer Dash
 CMD ["python", "app/core/app.py"]
