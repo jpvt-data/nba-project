@@ -1,5 +1,8 @@
 name: 📦 Mise à jour des données NBA
 
+env:
+  GH_TOKEN: ${{ secrets.GH_TOKEN }}
+
 on:
   schedule:
     - cron: "0 6 * * *"  # Tous les jours à 03:00 UTC (5h Paris)
@@ -31,6 +34,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
+          git remote set-url origin https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}
           git add data/*.csv
           git commit -m "♻️ Mise à jour automatique des données NBA"
           git push

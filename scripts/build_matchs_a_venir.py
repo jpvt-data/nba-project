@@ -24,6 +24,7 @@ headers = {
     "x-nba-stats-token": "true",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
     "x-nba-stats-origin": "stats",
+    "x-nba-stats-token": "true",    
     "Origin": "https://www.nba.com",
     "Referer": "https://www.nba.com/",
     "Accept-Encoding": "gzip, deflate, br",
@@ -38,7 +39,7 @@ for jour in jours:
     url = f"https://stats.nba.com/stats/scoreboardv3?GameDate={date_str}&LeagueID=00"
 
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
         games = response.json().get("scoreboard", {}).get("games", [])
 
