@@ -41,6 +41,7 @@ for jour in jours:
     try:
         response = requests.get(url, headers=headers, timeout=15)
         response.raise_for_status()
+        time.sleep(2)
         games = response.json().get("scoreboard", {}).get("games", [])
 
         for game in games:
