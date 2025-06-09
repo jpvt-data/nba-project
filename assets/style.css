@@ -142,13 +142,6 @@ p {
 
 /* === 📅 GRILLE RESPONSIVE DES MATCHS === */
 
-.grille-matchs {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 24px;
-    margin-top: 20px;
-}
-
 /* === 🏀 BLOC CARTE MATCH === */
 
 .carte-match {
@@ -227,12 +220,14 @@ p {
 
 .grille-matchs {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);  /* 🖥️ 3 colonnes max en desktop */
-    gap: 24px;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));  /* 🔽 plus étroit qu’avant */
+    gap: 20px;
     justify-content: center;
     margin-top: 30px;
-    padding: 0 10px;
+    padding: 0 8px;
 }
+
+
 
 /* 📱 Mobile : une seule carte par ligne */
 @media screen and (max-width: 768px) {
