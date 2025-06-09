@@ -1,9 +1,10 @@
 # ======================================
 # 📁 Lecture et transformation des matchs à venir (Scoreboard V3)
+# Source : data/processed/matchs.csv (complet)
 # ======================================
 
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # 🇫🇷 Traduction manuelle des jours et mois (compatibilité Render)
 jours_fr = {
@@ -18,31 +19,41 @@ mois_fr = {
 }
 
 def get_matchs_7j():
-    chemin_csv = "data/matchs_a_venir.csv"
+    chemin_csv = "data/processed/matchs.csv"
     df = pd.read_csv(chemin_csv)
 
-    # 🕒 Transformation de la date pour tri et regroupement
-    df["date_obj"] = pd.to_datetime(df["date_paris"], format="%Y-%m-%d")
-    df = df.sort_values("date_obj")
+    # 🕒 Conversion datetime (heure locale Paris)
+    df["datetime_paris"] = pd.to_datetime(df["dateParis"] + " " + df["heureParis"], format="%Y-%m-%d %H:%M")
+
+    # 📆 Maintenant (heure locale)
+    maintenant = datetime.now()
+
+    # 🔍 Filtrage : uniquement matchs à venir dans les 7 jours
+    df = df[(df["datetime_paris"] > maintenant) & 
+            (df["datetime_paris"] <= maintenant + timedelta(days=14))]
+    
+    # Tri par date
+    df = df.sort_values("datetime_paris")
 
     jours = []
-    for date_jour, groupe in df.groupby("date_obj"):
-        nom_jour = jours_fr[date_jour.strftime("%A")]
-        nom_mois = mois_fr[date_jour.strftime("%B")]
-        date_affichee = f"{nom_jour} {date_jour.day} {nom_mois}"
+    for date_jour, groupe in df.groupby(df["datetime_paris"].dt.date):
+        date_obj = pd.to_datetime(date_jour)
+        nom_jour = jours_fr[date_obj.strftime("%A")]
+        nom_mois = mois_fr[date_obj.strftime("%B")]
+        date_affichee = f"{nom_jour} {date_obj.day} {nom_mois}"
 
         matchs = []
         for _, row in groupe.iterrows():
             match = {
                 "date": date_affichee,
-                "heure": row["heure_paris"],
-                "home_id": row["home_team_id"],
-                "away_id": row["away_team_id"],
-                "home": row["home_team_tricode"],
-                "away": row["away_team_tricode"],
-                "series_game_number": row["series_game_number"],
-                "game_label": row["game_label"],
-                "if_necessary": row["if_necessary"]
+                "heure": row["heureParis"],
+                "home_id": row["homeTeamId"],
+                "away_id": row["awayTeamId"],
+                "home": row["homeTeamTricode"],
+                "away": row["awayTeamTricode"],
+                "series_game_number": row["seriesGameNumber"],
+                "game_label": row["gameLabel"],
+                "if_necessary": row["ifNecessary"]
             }
             matchs.append(match)
 
