@@ -1,4 +1,7 @@
-# build_matchs_a_venir.py — version optimisée GitHub Actions
+# ======================================
+# 🏗️ Export enrichi des matchs à venir via ScoreboardV3 (NBA Stats)
+# Version optimisée pour GitHub Actions (timeouts, pause, erreurs)
+# ======================================
 
 import requests
 import pandas as pd
@@ -10,11 +13,12 @@ import time
 # 📁 Création du dossier d'export
 os.makedirs("data", exist_ok=True)
 
-# 📅 Durée de prévision paramétrable (défaut : 3 jours)
+# 🔧 Durée paramétrable (par défaut : 3 jours, configurable avec JOURS_NBA)
 nb_jours = int(os.getenv("JOURS_NBA", 3))
 aujourd_hui = datetime.today()
 jours = [aujourd_hui + timedelta(days=i) for i in range(nb_jours)]
 
+# 📬 Headers pour l'API NBA (obligatoire pour stats.nba.com)
 headers = {
     "Host": "stats.nba.com",
     "Connection": "keep-alive",
@@ -36,10 +40,12 @@ for jour in jours:
     url = f"https://stats.nba.com/stats/scoreboardv3?GameDate={date_str}&LeagueID=00"
 
     try:
-        response = requests.get(url, headers=headers, timeout=15)
+        response = requests.get(url, headers=headers, timeout=60)
         response.raise_for_status()
-        time.sleep(2)
         games = response.json().get("scoreboard", {}).get("games", [])
+
+        if not games:
+            print(f"📭 Aucun match pour le {date_str}")
 
         for game in games:
             game_et = game.get("gameEt")
@@ -79,14 +85,15 @@ for jour in jours:
         erreurs_consecutives = 0
 
     except Exception as e:
-        print(f"⚠️ Timeout pour {date_str} : {e}")
+        print(f"⚠️ Erreur pour {date_str} : {e}")
         erreurs_consecutives += 1
         if erreurs_consecutives >= 5:
             print("🚨 Trop d'erreurs consécutives, arrêt du script.")
             break
 
-    time.sleep(1)
+    time.sleep(3)  # 🔁 Pause un peu plus longue pour éviter les blocages
 
+# 💾 Export CSV
 df = pd.DataFrame(matchs_extraits)
 df.to_csv("data/matchs_a_venir.csv", index=False, encoding="utf-8")
 print(f"📁 Export terminé : {len(df)} matchs enregistrés.")

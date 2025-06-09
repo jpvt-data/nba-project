@@ -2,7 +2,7 @@ name: 📦 Mise à jour des données NBA
 
 env:
   GH_TOKEN: ${{ secrets.GH_TOKEN }}
-  JOURS_NBA: 7
+  JOURS_NBA: 3
 
 on:
   schedule:
