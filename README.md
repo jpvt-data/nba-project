@@ -1,4 +1,4 @@
-# NBA Dashboard – Pronos entre Potes
+# NBA Dashboard – Pronos entre Amis
 
 Une application web interactive pour vivre la saison NBA entre amis.
 
