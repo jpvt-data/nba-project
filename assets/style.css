@@ -283,3 +283,22 @@ p {
     font-size: 0.95rem;
     font-style: italic;
 }
+
+/* === 🧱 STYLE DE LA PAGE ACCUEIL === */
+
+.titre-bloc {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-align: left;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+.texte-description {
+    font-size: 1.05rem;
+    color: #bbbbbb;
+    margin-bottom: 30px;
+    max-width: 750px;
+    text-align: left;
+}
