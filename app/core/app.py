@@ -14,7 +14,7 @@ sys.path.insert(0, str(racine))
 
 # 📦 Import Dash
 import dash
-from dash import dcc, html, Input, Output
+from dash import dcc, html, Input, Output, State
 import dash_bootstrap_components as dbc
 
 # 📄 Import des layouts de pages
@@ -45,6 +45,18 @@ app = dash.Dash(
     title="NBA Dashboard"
 )
 
+# 👇 Forcer la validation de tous les IDs utilisés dans les callbacks
+app.validation_layout = html.Div([
+    dcc.Location(id="url"),
+    dcc.Store(id="session_utilisateur", storage_type="session"),
+    dcc.Location(id="forcage_url", refresh=True),
+    dcc.Input(id="champ_pseudo"),
+    dcc.Input(id="champ_mdp"),
+    html.Button(id="bouton_connexion"),
+    html.Div(id="message_connexion"),
+    html.Div(id="fake_trigger")  # <<< C’EST CELUI QUI MANQUE AU VALIDATION_LAYOUT !
+])
+
 server = app.server  # utile pour déploiement Render
 
 # ======================================
@@ -52,18 +64,22 @@ server = app.server  # utile pour déploiement Render
 # ======================================
 app.layout = html.Div([
     dcc.Location(id="url"),
-    navbar(),  # barre de navigation responsive
+    dcc.Location(id="forcage_url", refresh=True),  # nouveau redirecteur
+    dcc.Store(id="session_utilisateur", storage_type="session"),
+    navbar(),
     html.Div(id="contenu_page", style={"padding": "20px"})
 ])
+
 
 # ======================================
 # 🔁 Routing dynamique entre les pages
 # ======================================
 @app.callback(
     Output("contenu_page", "children"),
-    Input("url", "pathname")
+    Input("url", "pathname"),
+    State("session_utilisateur", "data")
 )
-def afficher_page(pathname):
+def afficher_page(pathname, session_data):
     routes = {
         "/": accueil_layout,
         "/statistiques": statistiques_layout,
@@ -74,6 +90,11 @@ def afficher_page(pathname):
         "/connexion": connexion_layout,
         "/admin": admin_layout
     }
+
+    # Si l'utilisateur n'est pas connecté, rediriger vers /connexion
+    if pathname != "/connexion" and not session_data:
+        return connexion_layout()
+
     return routes.get(pathname, lambda: html.H1("404 – Page introuvable", style={"color": "white", "textAlign": "center"}))()
 
 
@@ -139,6 +160,33 @@ def afficher_matchs(path):
             cartes.append(carte)
 
     return html.Div(cartes, className="grille-matchs")
+
+# ======================================
+# 🔁 Authentification simple (pseudo/mdp)
+# ======================================
+
+import json
+from dotenv import load_dotenv
+load_dotenv()
+USERS = json.loads(os.getenv("USERS_JSON", "{}"))
+
+@app.callback(
+    Output("session_utilisateur", "data"),
+    Output("fake_trigger", "children"),
+    Output("message_connexion", "children"),
+    Input("bouton_connexion", "n_clicks"),
+    State("champ_pseudo", "value"),
+    State("champ_mdp", "value"),
+    prevent_initial_call=True
+)
+def verifier_connexion(n_clicks, pseudo, mdp):
+    if not pseudo or not mdp:
+        return dash.no_update, dash.no_update, "Veuillez remplir les deux champs."
+
+    if pseudo in USERS and USERS[pseudo] == mdp:
+        return pseudo, "__REDIR__", ""
+    else:
+        return dash.no_update, "", "Identifiants incorrects."
 
 
 
