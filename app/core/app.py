@@ -146,6 +146,15 @@ def verifier_connexion(n_clicks, pseudo, motdepasse):
     else:
         return dash.no_update, dash.no_update, "Identifiants incorrects."
 
+@app.callback(
+    Output("session_utilisateur", "clear_data"),
+    Output("url", "pathname"),
+    Input("bouton_deconnexion", "n_clicks"),
+    prevent_initial_call=True
+)
+def deconnexion(n_clicks):
+    return True, "/connexion"
+
 
 # ▶️ Lancement local
 if __name__ == "__main__":
