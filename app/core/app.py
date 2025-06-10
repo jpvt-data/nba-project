@@ -77,9 +77,12 @@ app.layout = html.Div([
 @app.callback(
     Output("contenu_page", "children"),
     Input("url", "pathname"),
-    State("session_utilisateur", "data")
+    Input("session_utilisateur", "data")
 )
-def afficher_page(pathname, session_data):
+def afficher_page(pathname, session):
+    if not session or not session.get("connecté"):
+        return connexion_layout
+
     routes = {
         "/": accueil_layout,
         "/statistiques": statistiques_layout,
@@ -90,10 +93,6 @@ def afficher_page(pathname, session_data):
         "/connexion": connexion_layout,
         "/admin": admin_layout
     }
-
-    # Si l'utilisateur n'est pas connecté, rediriger vers /connexion
-    if pathname != "/connexion" and not session_data:
-        return connexion_layout()
 
     return routes.get(pathname, lambda: html.H1("404 – Page introuvable", style={"color": "white", "textAlign": "center"}))()
 
@@ -176,21 +175,31 @@ USERS = json.loads(os.getenv("USERS_JSON", "{}"))
 
 @app.callback(
     Output("session_utilisateur", "data"),
-    Output("fake_trigger", "children"),
+    Output("redir_connexion", "pathname"),
     Output("message_connexion", "children"),
     Input("bouton_connexion", "n_clicks"),
     State("champ_pseudo", "value"),
     State("champ_mdp", "value"),
     prevent_initial_call=True
 )
-def verifier_connexion(n_clicks, pseudo, mdp):
-    if not pseudo or not mdp:
-        return dash.no_update, dash.no_update, "Veuillez remplir les deux champs."
+def verifier_connexion(n_clicks, pseudo, motdepasse):
+    utilisateurs_json = os.environ.get("USERS_JSON")
 
-    if pseudo in USERS and USERS[pseudo] == mdp:
-        return pseudo, "__REDIR__", ""
+    if not utilisateurs_json:
+        return dash.no_update, dash.no_update, "⚠️ Aucun utilisateur défini."
+
+    try:
+        utilisateurs = json.loads(utilisateurs_json)
+    except:
+        return dash.no_update, dash.no_update, "⚠️ Format JSON invalide pour USERS_JSON."
+
+    if not pseudo or not motdepasse:
+        return dash.no_update, dash.no_update, "Veuillez entrer un identifiant et un mot de passe."
+
+    if utilisateurs.get(pseudo) == motdepasse:
+        return {"connecté": True, "pseudo": pseudo}, "/", ""
     else:
-        return dash.no_update, "", "Identifiants incorrects."
+        return dash.no_update, dash.no_update, "Identifiants incorrects."
 
 
 
