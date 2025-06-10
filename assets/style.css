@@ -227,11 +227,59 @@ p {
     padding: 0 8px;
 }
 
-
-
 /* 📱 Mobile : une seule carte par ligne */
 @media screen and (max-width: 768px) {
     .grille-matchs {
         grid-template-columns: 1fr;
     }
+}
+
+/* === 🎨 STYLE SPÉCIFIQUE À LA PAGE DE CONNEXION === */
+
+.texte-accueil {
+    font-size: 1.1rem;
+    color: #dddddd;
+    margin-bottom: 20px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.champ-connexion {
+    background-color: #fef9d7;
+    color: #000000;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 1rem;
+    max-width: 100%;
+    box-shadow: inset 0 0 3px rgba(0,0,0,0.2);
+}
+
+.champ-connexion::placeholder {
+    color: #444444;
+    font-style: italic;
+}
+
+.bouton-connexion {
+    width: 100%;
+    background-color: #3b5998;
+    border: none;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 10px 0;
+    border-radius: 6px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.bouton-connexion:hover {
+    background-color: #2e4372;
+}
+
+.message-erreur {
+    margin-top: 18px;
+    color: #ff4c4c;
+    text-align: center;
+    font-size: 0.95rem;
+    font-style: italic;
 }

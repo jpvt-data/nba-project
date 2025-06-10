@@ -21,7 +21,7 @@ def navbar():
 
     return dbc.Navbar(
         dbc.Container([
-            dbc.NavbarBrand("NBA Dashboard", href="/", className="ms-2 navbar-title"),
+            dbc.NavbarBrand("🏀 Swish League", href="/", className="ms-2 navbar-title"),
 
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
 
