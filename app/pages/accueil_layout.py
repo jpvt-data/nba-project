@@ -8,6 +8,15 @@ def accueil_layout():
     return html.Div(
         style={"backgroundColor": "#121212", "minHeight": "100vh", "padding": "30px"},
         children=[
+            # 🔐 Message connexion en haut à droite
+            html.Div(
+                html.Div([
+                    html.Span("👋 Salut ! "),
+                    html.A("Connecte toi", href="/connexion", style={"color": "#1e90ff", "textDecoration": "underline"}),
+                    html.Span(" pour jouer avec tes amis !")
+                ]),
+                style={"textAlign": "right", "marginBottom": "20px"}
+            ),
 
             # 🏠 Titre principal
             html.H1("Bienvenue sur le NBA Dashboard !", className="titre-texte"),
