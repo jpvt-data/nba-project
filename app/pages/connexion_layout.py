@@ -2,9 +2,7 @@
 # 🔐 Page de Connexion - NBA Dashboard
 # ======================================
 
-import os
-import json
-from dash import html, dcc, Input, Output, State
+from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 # 🧱 Layout simple : pseudo + mdp + bouton
@@ -22,6 +20,5 @@ connexion_layout = html.Div([
         ], justify="center")
     ]),
 
-    # Redirection automatique
     dcc.Location(id="redir_connexion", refresh=True)
 ])

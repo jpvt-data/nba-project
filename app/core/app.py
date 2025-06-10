@@ -2,7 +2,6 @@
 # 🎮 App principale - NBA Dashboard multipage
 # ======================================
 
-# 📦 Import des librairies système
 import sys
 import pandas as pd
 import os
@@ -13,12 +12,12 @@ from pathlib import Path
 racine = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(racine))
 
-# 📦 Import Dash
+# 📦 Dash
 import dash
 from dash import dcc, html, Input, Output, State
 import dash_bootstrap_components as dbc
 
-# 📄 Import des layouts de pages
+# 📄 Layouts des pages
 from app.pages.accueil_layout import accueil_layout
 from app.pages.statistiques_layout import statistiques_layout
 from app.pages.joueurs_layout import joueurs_layout
@@ -28,15 +27,11 @@ from app.pages.palmares_layout import palmares_layout
 from app.pages.connexion_layout import connexion_layout
 from app.pages.admin_layout import admin_layout
 
-# Import des scripts connexes
+# 🔧 Scripts internes
 from app.core.get_matchs_7j import get_matchs_7j
-
-# 📋 Import de la navbar
 from app.composants.menu import navbar
 
-# ======================================
-# 🚀 Initialisation de l'app Dash
-# ======================================
+# 🚀 Initialisation app Dash
 chemin_assets = os.path.join(racine, "assets")
 app = dash.Dash(
     __name__,
@@ -46,11 +41,9 @@ app = dash.Dash(
     title="NBA Dashboard"
 )
 
-server = app.server  # utile pour déploiement Render
+server = app.server
 
-# ======================================
-# 🖼️ Layout principal
-# ======================================
+# 🖼️ Layout global
 app.layout = html.Div([
     dcc.Store(id="session_utilisateur", storage_type="session"),
     dcc.Location(id="url"),
@@ -58,9 +51,7 @@ app.layout = html.Div([
     html.Div(id="contenu_page", style={"padding": "20px"})
 ])
 
-# ======================================
-# 🔁 Routing dynamique entre les pages avec auth
-# ======================================
+# 🔁 Routing avec vérification de session
 @app.callback(
     Output("contenu_page", "children"),
     Input("url", "pathname"),
@@ -84,9 +75,7 @@ def afficher_page(pathname, session):
     return routes.get(pathname, lambda: html.H1("404 – Page introuvable", style={"color": "white", "textAlign": "center"}))()
 
 
-# ======================================
-# 🗓️ Callback affichage des matchs des 7 prochains jours (Accueil)
-# ======================================
+# 📆 Affichage des matchs (Accueil)
 @app.callback(
     Output("bloc_matchs", "children"),
     Input("url", "pathname")
@@ -128,8 +117,36 @@ def afficher_matchs(path):
     return html.Div(cartes, className="grille-matchs")
 
 
-# ======================================
+# 🔐 Authentification - Callback de connexion
+@app.callback(
+    Output("session_utilisateur", "data"),
+    Output("redir_connexion", "pathname"),
+    Output("message_connexion", "children"),
+    Input("bouton_connexion", "n_clicks"),
+    State("champ_pseudo", "value"),
+    State("champ_mdp", "value"),
+    prevent_initial_call=True
+)
+def verifier_connexion(n_clicks, pseudo, motdepasse):
+    utilisateurs_json = os.environ.get("USERS_JSON")
+
+    if not utilisateurs_json:
+        return dash.no_update, dash.no_update, "⚠️ Aucun utilisateur défini."
+
+    try:
+        utilisateurs = json.loads(utilisateurs_json)
+    except:
+        return dash.no_update, dash.no_update, "⚠️ Format JSON invalide pour USERS_JSON."
+
+    if not pseudo or not motdepasse:
+        return dash.no_update, dash.no_update, "Veuillez entrer un identifiant et un mot de passe."
+
+    if utilisateurs.get(pseudo) == motdepasse:
+        return {"connecté": True, "pseudo": pseudo}, "/", ""
+    else:
+        return dash.no_update, dash.no_update, "Identifiants incorrects."
+
+
 # ▶️ Lancement local
-# ======================================
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))
