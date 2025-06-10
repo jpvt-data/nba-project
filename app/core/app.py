@@ -166,8 +166,12 @@ def afficher_matchs(path):
 # ======================================
 
 import json
-from dotenv import load_dotenv
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    pass  # Sur Render, dotenv est inutile
+
 USERS = json.loads(os.getenv("USERS_JSON", "{}"))
 
 @app.callback(
