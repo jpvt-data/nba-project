@@ -45,6 +45,7 @@ def get_matchs_7j():
         matchs = []
         for _, row in groupe.iterrows():
             match = {
+                "game_id": row["gameId"],
                 "date": date_affichee,
                 "heure": row["heureParis"],
                 "home_id": row["homeTeamId"],

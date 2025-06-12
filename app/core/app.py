@@ -122,35 +122,55 @@ def afficher_matchs(path):
             if str(m.get("if_necessary")).lower() == "true":
                 ligne_infos += " – Si Nécessaire"
 
+            # 🔠 Tricodes
+            tricode_away = m["away"]
+            tricode_home = m["home"]
+
             carte = html.Div([
+
                 html.Div(f"{jour['date']} – {m['heure']}", className="carte-date"),
                 html.Div(ligne_infos, className="carte-infos"),
 
                 html.Div([
+
+                    # Bloc équipe extérieure
                     html.Div([
                         html.Img(
                             src=f"https://cdn.nba.com/logos/nba/{m['away_id']}/global/L/logo.svg",
                             className="carte-logo"
+                        ),
+                        html.Button(
+                            f"Victoire {tricode_away}",
+                            id={"type": "btn_prono", "game_id": m["game_id"], "team": tricode_away},
+                            className="bouton-prono",
+                            n_clicks=0
                         )
                     ], className="carte-equipe"),
 
                     html.Div("VS", className="carte-vs"),
 
+                    # Bloc équipe domicile
                     html.Div([
                         html.Img(
                             src=f"https://cdn.nba.com/logos/nba/{m['home_id']}/global/L/logo.svg",
                             className="carte-logo"
+                        ),
+                        html.Button(
+                            f"Victoire {tricode_home}",
+                            id={"type": "btn_prono", "game_id": m["game_id"], "team": tricode_home},
+                            className="bouton-prono",
+                            n_clicks=0
                         )
                     ], className="carte-equipe"),
-                ], className="carte-ligne"),
 
-                html.Button("🔮 Prono", className="bouton-prono", n_clicks=0)
+                ], className="carte-ligne"),
 
             ], className="carte-match")
 
             cartes.append(carte)
 
     return html.Div(cartes, className="grille-matchs")
+
 
 
 # ======================================

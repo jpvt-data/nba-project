@@ -13,7 +13,7 @@ def accueil_layout():
             html.Div([
 
                 # 🏠 Titre principal
-                html.H1("Bienvenue dans Swish League 🏀 !", className="titre-texte"),
+                html.H1("Bienvenue dans Swish League !", className="titre-texte"),
 
                 # 👋 Introduction générale
                 html.P([
@@ -33,9 +33,14 @@ def accueil_layout():
                     html.P([
                         "Voici les matchs des 7 prochains jours à ne surtout pas rater.",
                         html.Br(),
-                        "Pronostique vite avant qu'ils ne soient verrouillés – chaque point compte pour grimper au classement 🏆",
-                    ], className="texte-description"
-                    ),
+                        "Avant de faire ton choix, n'hésite pas à consulter les pages ",
+                        html.Strong("Statistiques, Joueurs ou Classement"),
+                        " pour affiner ton analyse.",
+                        html.Br(),
+                        "👉 Clique sur le bouton sous l'équipe que tu vois gagnante.",
+                        html.Br(),
+                        html.Strong("Une fois ton choix validé, il sera définitif – impossible de revenir en arrière ! 🛑"),
+                    ], className="texte-description"),
                     html.Div(id="bloc_matchs")
                 ], className="section-bloc"),
 
