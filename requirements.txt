@@ -3,3 +3,5 @@ pandas
 requests
 nba_api
 python-dotenv
+psycopg2-binary
+SQLAlchemy

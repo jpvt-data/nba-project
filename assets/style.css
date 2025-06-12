@@ -101,7 +101,7 @@ p,
 
 /* === Logo NBA === */
 .navbar-logo {
-    height: 60px;
+    height: 80px;
     width: auto;
     margin-right: 20px; /* ✅ très faible espace entre logo et texte */
 }
