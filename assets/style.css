@@ -103,7 +103,7 @@ p,
 .navbar-logo {
     height: 60px;
     width: auto;
-    margin-right: 0px; /* ✅ très faible espace entre logo et texte */
+    margin-right: 10px; /* ✅ très faible espace entre logo et texte */
 }
 
 .nav-text {
@@ -120,6 +120,7 @@ p,
 .navbar-brand-wrapper {
     display: flex;
     align-items: center;
+    margin-left: 20px;
 }
 
 /* === Blocs page Accueil === */
