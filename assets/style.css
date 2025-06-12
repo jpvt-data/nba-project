@@ -304,3 +304,9 @@ p,
         transform: translateY(0);
     }
 }
+
+.texte-description p {
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}

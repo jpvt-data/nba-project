@@ -30,18 +30,26 @@ def accueil_layout():
                     ], className="container-site"),
 
                     html.H2("Matchs à pronostiquer", className="titre-bloc"),
-                    html.P([
-                        "Voici les matchs des 7 prochains jours à ne surtout pas rater.",
-                        html.Br(),
-                        "Avant de faire ton choix, n'hésite pas à consulter les pages ",
-                        html.Strong("Statistiques, Joueurs ou Classement"),
-                        " pour affiner ton analyse.",
-                        html.Br(),
-                        "👉 Clique sur le bouton sous l'équipe que tu vois gagnante.",
-                        html.Br(),
-                        html.Strong("Une fois ton choix validé, il sera définitif – impossible de revenir en arrière ! 🛑"),
-                        html.Br(),
-                        "⏳ Tu peux pronostiquer jusqu'à l'heure du début du match – après ça, c'est verrouillé !"
+                    html.Div([
+                        html.P("Voici les matchs des 7 prochains jours à ne surtout pas rater."),
+                        html.P([
+                            "Avant de faire ton choix, tu peux consulter les pages ",
+                            html.Strong("Statistiques, Joueurs ou Classement"),
+                            " pour affiner ton analyse."
+                        ]),
+                        html.P([
+                            "👉 ",
+                            html.Strong("Clique sur le bouton sous l'équipe que tu vois gagnante.")
+                        ]),
+                        html.P([
+                            "🚨 ",
+                            html.Strong("Attention : une fois ton choix validé, il sera définitif."),
+                            " Impossible de revenir en arrière !"
+                        ]),
+                        html.P([
+                            "⏳ Tu peux pronostiquer jusqu’à l’heure de début du match.",
+                            " Ensuite, c’est verrouillé automatiquement !"
+                        ])
                     ], className="texte-description"),
 
                     html.Div(id="bloc_matchs")
