@@ -1,49 +1,82 @@
-/* === CHARTE GRAPHIQUE NBA DASHBOARD === */
+/* ================================================
+   🌈 style.css - Charte graphique globale NBA Dashboard
+   ================================================
+*/
 
+/* === Général === */
 body {
     background-color: #121212;
     color: #ffffff;
     font-family: 'Exo 2', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
-a, a:visited {
+/* Centrage du corps de page */
+.container-site {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 30px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* === Titres === */
+h1, h2, h3, h4 {
+    margin-bottom: 0.8rem;
+    text-align: left;
+}
+
+.titre-texte {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: white;
+}
+
+.titre-bloc {
+    font-size: 1.7rem;
+    font-weight: 700;
     color: #ffffff;
-    text-decoration: none;
+    margin-top: 20px;
+    margin-bottom: 10px;
 }
 
-a:hover {
-    color: #1e90ff;
-    text-decoration: underline;
+.titre-jour {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+@media screen and (max-width: 768px) {
+    .titre-jour {
+        text-align: center;
+    }
+}
+
+/* === Paragraphes & Textes === */
+p,
+.texte-description,
+.texte-intro,
+.texte-accueil {
+    font-size: 1.1rem;
+    color: #bbbbbb;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    text-align: left;
+}
+
+/* === Navbar === */
+.navbar-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 .navbar-brand {
     font-weight: bold;
     font-size: 1.3rem;
-}
-
-.nav-link {
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-h1 {
-    font-size: 2.2rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-}
-
-p {
-    font-size: 1.1rem;
-    color: #bbbbbb;
-}
-
-/* === NAVBAR PERSONNALISÉE === */
-
-.navbar-title {
-    font-family: 'Exo 2', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    letter-spacing: 0.5px;
 }
 
 .nav-link-custom {
@@ -57,152 +90,122 @@ p {
 
 .nav-link-custom:hover {
     background-color: rgba(255, 255, 255, 0.05);
-    text-decoration: none;
 }
 
 .nav-logo {
     height: 22px;
     width: auto;
     margin-right: 6px;
-    background-color: transparent;
+    vertical-align: middle;
 }
 
 .nav-text {
-    font-family: 'Exo 2', sans-serif;
     font-size: 1rem;
     font-weight: 600;
 }
 
-/* === TITRES DE PAGE STYLÉS === */
-
-.titre-page {
-    display: flex;
-    align-items: center;
-    margin-bottom: 30px;
+/* === Blocs page Accueil === */
+.section-bloc {
+    margin-bottom: 60px;
 }
 
-.titre-logo {
-    height: 38px;
-    width: auto;
-    margin-right: 16px;
-}
-
-.titre-texte {
-    font-family: 'Exo 2', sans-serif;
-    font-size: 2.4rem;
-    font-weight: 700;
-    color: white;
-    margin: 0;
-}
-
-.texte-secondaire {
-    font-size: 1.1rem;
-    color: #bbbbbb;
-}
-
-
-/* === 🔲 STRUCTURE DES BLOCS DE PAGE ACCUEIL === */
-
-/* === 🎚️ RADIOBUTTON CLASSEMENT NBA - VERSION AÉRÉE === */
-
-/* Conteneur global des options */
 .toggle-classement {
     margin-bottom: 20px;
     font-size: 1rem;
 }
 
-/* Style appliqué aux éléments individuels */
 .toggle-classement input[type="radio"] {
     margin-right: 6px;
     transform: scale(1.1);
 }
 
-/* Ajoute de l’espace entre les libellés */
 .toggle-classement label {
     margin-right: 18px;
     cursor: pointer;
 }
 
-
-/* === 🎚️ RADIOBUTTON CLASSEMENT NBA === */
-
-/* Marge sous les boutons radio Saison / Playoffs */
-.toggle-classement {
-    margin-bottom: 20px;
-}
-
-/* === 📰 STYLE DE LA LISTE D'ACTUS === */
-
-/* Espacement entre les éléments de la liste */
+/* === Actus === */
 .liste-actus li {
     margin-bottom: 10px;
     font-size: 1rem;
     color: #cccccc;
 }
 
-/* === 📅 GRILLE RESPONSIVE DES MATCHS === */
+/* === Grille des matchs (4 par ligne sur PC, 1 sur mobile) === */
+.grille-matchs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    justify-content: center;
+    margin-top: 20px;
+}
 
-/* === 🏀 BLOC CARTE MATCH === */
+@media screen and (max-width: 768px) {
+    .grille-matchs {
+        grid-template-columns: 1fr;
+    }
+}
 
+/* === Carte Match Compacte – Ajustée === */
 .carte-match {
     background-color: #1e1e1e;
-    padding: 20px;
-    border-radius: 12px;
+    padding: 10px;
+    border-radius: 10px;
     text-align: center;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-shadow: 0 0 6px rgba(0, 0, 0, 0.12);
+    max-width: 250px;
+    width: 100%;
+    margin: auto;
 }
 
 .carte-date {
-    font-size: 1.7rem;
-    font-weight: bold;
+    font-size: 0.9rem;
+    font-weight: 600;
     color: #ffffff;
-    margin-bottom: 12px;
+    margin-bottom: 4px;
+}
+
+.carte-infos {
+    font-size: 0.8rem;
+    color: #cccccc;
+    font-style: italic;
+    margin-bottom: 10px;
 }
 
 .carte-ligne {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 30px;
+    gap: 14px;
+    margin-bottom: 8px;
 }
 
 .carte-equipe {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-}
-
-.carte-infos {
-    font-size: 0.9rem;
-    color: #cccccc;
-    margin-bottom: 12px;
-    font-style: italic;
+    gap: 4px;
 }
 
 .carte-logo {
-    height: 170px;
+    height: 75px;
     width: auto;
 }
 
 .carte-abbr {
-    font-size: 2rem;
-    font-weight: bold;
-    color: #ffffff;
-    font-style: italic;
-    letter-spacing: 1px;
+    display: none;
 }
 
 .carte-vs {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
     color: #ffffff;
-    font-weight: 700;
 }
 
 .bouton-prono {
-    margin-top: 14px;
-    padding: 8px 18px;
-    font-size: 1rem;
+    margin-top: 4px;
+    padding: 6px 14px;
+    font-size: 0.95rem;
     font-weight: bold;
     color: #ffffff;
     background-color: #1e90ff;
@@ -216,35 +219,14 @@ p {
     background-color: #0077cc;
 }
 
-/* === 🎯 Disposition responsive des cartes match === */
-
-.grille-matchs {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(220px, 1fr));  /* 🔽 plus étroit qu’avant */
-    gap: 20px;
+.prono-centre {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin-top: 30px;
-    padding: 0 8px;
+    height: 100%;
 }
 
-/* 📱 Mobile : une seule carte par ligne */
-@media screen and (max-width: 768px) {
-    .grille-matchs {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* === 🎨 STYLE SPÉCIFIQUE À LA PAGE DE CONNEXION === */
-
-.texte-accueil {
-    font-size: 1.1rem;
-    color: #dddddd;
-    margin-bottom: 20px;
-    max-width: 500px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
+/* === Connexion === */
 .champ-connexion {
     background-color: #fef9d7;
     color: #000000;
@@ -282,23 +264,4 @@ p {
     text-align: center;
     font-size: 0.95rem;
     font-style: italic;
-}
-
-/* === 🧱 STYLE DE LA PAGE ACCUEIL === */
-
-.titre-bloc {
-    font-size: 1.7rem;
-    font-weight: 700;
-    color: #ffffff;
-    text-align: left;
-    margin-top: 20px;
-    margin-bottom: 10px;
-}
-
-.texte-description {
-    font-size: 1.05rem;
-    color: #bbbbbb;
-    margin-bottom: 30px;
-    max-width: 750px;
-    text-align: left;
 }

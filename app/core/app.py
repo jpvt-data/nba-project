@@ -96,7 +96,6 @@ def afficher_page(pathname, session):
 
     return routes.get(pathname, lambda: html.H1("404 – Page introuvable", style={"color": "white", "textAlign": "center"}))()
 
-
 # ======================================
 # 📆 Callback affichage des matchs des 7 prochains jours (Accueil)
 # ======================================
@@ -110,19 +109,14 @@ def afficher_matchs(path):
         return None
 
     jours = get_matchs_7j()
-    elements = []
-
-    elements.append(html.Div([
-        html.H2("🗓️ Matchs de la semaine", className="titre-texte")
-    ], style={"marginBottom": "30px", "marginTop": "20px"}))
-
     cartes = []
+
     for jour in jours:
         for m in jour["matchs"]:
-            # 💬 Ligne info : Label + Match + Si Nécessaire
+            # Ligne d'infos contextuelle
             ligne_infos = m["game_label"] or ""
 
-            if pd.notnull(m.get("series_game_number")) and isinstance(m["series_game_number"], str) and m["series_game_number"].strip():
+            if pd.notnull(m.get("series_game_number")) and isinstance(m["series_game_number"], str):
                 ligne_infos += f" – Match {m['series_game_number'].replace('Game', '').strip()}"
 
             if str(m.get("if_necessary")).lower() == "true":
@@ -137,8 +131,7 @@ def afficher_matchs(path):
                         html.Img(
                             src=f"https://cdn.nba.com/logos/nba/{m['away_id']}/global/L/logo.svg",
                             className="carte-logo"
-                        ),
-                        html.Div(m["away"], className="carte-abbr")
+                        )
                     ], className="carte-equipe"),
 
                     html.Div("VS", className="carte-vs"),
@@ -147,9 +140,8 @@ def afficher_matchs(path):
                         html.Img(
                             src=f"https://cdn.nba.com/logos/nba/{m['home_id']}/global/L/logo.svg",
                             className="carte-logo"
-                        ),
-                        html.Div(m["home"], className="carte-abbr")
-                    ], className="carte-equipe")
+                        )
+                    ], className="carte-equipe"),
                 ], className="carte-ligne"),
 
                 html.Button("🔮 Prono", className="bouton-prono", n_clicks=0)
@@ -159,6 +151,7 @@ def afficher_matchs(path):
             cartes.append(carte)
 
     return html.Div(cartes, className="grille-matchs")
+
 
 # ======================================
 # 🔁 Authentification simple (pseudo/mdp)
