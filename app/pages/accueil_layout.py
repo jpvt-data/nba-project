@@ -40,7 +40,10 @@ def accueil_layout():
                         "👉 Clique sur le bouton sous l'équipe que tu vois gagnante.",
                         html.Br(),
                         html.Strong("Une fois ton choix validé, il sera définitif – impossible de revenir en arrière ! 🛑"),
+                        html.Br(),
+                        "⏳ Tu peux pronostiquer jusqu'à l'heure du début du match – après ça, c'est verrouillé !"
                     ], className="texte-description"),
+
                     html.Div(id="bloc_matchs")
                 ], className="section-bloc"),
 
