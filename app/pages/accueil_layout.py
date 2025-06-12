@@ -25,6 +25,10 @@ def accueil_layout():
 
                 # 📆 Bloc 1 – Matchs à pronostiquer
                 html.Div([
+                    html.Div([
+                        html.Hr(className="ligne-separatrice")
+                    ], className="container-site"),
+
                     html.H2("Matchs à pronostiquer", className="titre-bloc"),
                     html.P([
                         "Voici les matchs des 7 prochains jours à ne surtout pas rater.",
@@ -37,6 +41,9 @@ def accueil_layout():
 
                 # 🔜 Autres blocs prévus (non encore activés)
                 html.Div([
+                    html.Div([
+                        html.Hr(className="ligne-separatrice")
+                    ], className="container-site"),
                     html.H2("Classement NBA", className="titre-bloc"),
                     dcc.RadioItems(
                         id="type_classement",
@@ -51,6 +58,10 @@ def accueil_layout():
                     html.Div(id="bloc_classement")
                 ], className="section-bloc"),
 
+                
+                html.Div([
+                    html.Hr(className="ligne-separatrice")
+                ], className="container-site"),
                 html.Div([
                     html.H2("Dernières infos NBA", className="titre-bloc"),
                     html.Ul(id="bloc_actu", className="liste-actus")

@@ -20,8 +20,14 @@ def navbar():
         )
 
     return dbc.Navbar(
-        dbc.Container([
-            dbc.NavbarBrand("🏀 Swish League", href="/", className="ms-2 navbar-title"),
+        children=[
+            dbc.NavbarBrand(
+                html.Div([
+                    html.Img(src="/assets/logos/nba_logo.png", className="navbar-logo"),
+                    html.Span("Swish League", className="nav-titre")
+                ], className="d-flex align-items-center navbar-brand-wrapper"),
+                href="/"
+            ),
 
             dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
 
@@ -34,15 +40,16 @@ def navbar():
                     lien("classement.png", "Classement", "/classement"),
                     lien("palmares.png", "Palmarès", "/palmares"),
                     lien("connection.png", "Connexion", "/connexion"),
-                    lien("admin.png", "Admin", "/admin")  # temporaire
+                    lien("admin.png", "Admin", "/admin")
                 ], className="ms-auto", navbar=True),
                 id="navbar-collapse",
                 is_open=False,
                 navbar=True
             ),
-        ]),
+        ],
         color="dark",
         dark=True,
         sticky="top",
         className="navbar-custom"
     )
+

@@ -99,9 +99,27 @@ p,
     vertical-align: middle;
 }
 
+/* === Logo NBA === */
+.navbar-logo {
+    height: 60px;
+    width: auto;
+    margin-right: 0px; /* ✅ très faible espace entre logo et texte */
+}
+
 .nav-text {
     font-size: 1rem;
     font-weight: 600;
+}
+
+.nav-titre {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+/* 🏀 Groupe logo + titre */
+.navbar-brand-wrapper {
+    display: flex;
+    align-items: center;
 }
 
 /* === Blocs page Accueil === */
@@ -204,8 +222,8 @@ p,
 
 .bouton-prono {
     margin-top: 4px;
-    padding: 6px 14px;
-    font-size: 0.95rem;
+    padding: 4px 12px;
+    font-size: 0.85rem;
     font-weight: bold;
     color: #ffffff;
     background-color: #1e90ff;
@@ -264,4 +282,24 @@ p,
     text-align: center;
     font-size: 0.95rem;
     font-style: italic;
+}
+
+/* === Ligne séparatrice de section === */
+
+.ligne-separatrice {
+    border: none;
+    border-top: 2px solid #ffffff;
+    width: 100%;
+    max-width: 100%;
+    opacity: 0;
+    transform: translateY(-10px);
+    animation: apparition-ligne 0.8s ease forwards;
+    margin: 40px auto 30px auto;
+}
+
+@keyframes apparition-ligne {
+    to {
+        opacity: 0.15;
+        transform: translateY(0);
+    }
 }
