@@ -310,3 +310,45 @@ p,
     font-size: 0.95rem;
     line-height: 1.5;
 }
+
+/* === Fix responsive navbar – mobile aligné === */
+@media screen and (max-width: 768px) {
+    .navbar-custom {
+        flex-wrap: nowrap !important;
+    }
+
+    .navbar-brand-wrapper {
+        flex-shrink: 1;
+        min-width: 0;
+        margin-left: 10px;
+    }
+
+    .navbar-logo {
+        height: 60px; /* un peu plus petit en mobile */
+        margin-right: 10px;
+    }
+
+    .nav-titre {
+        font-size: 1.4rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .navbar-toggler {
+        margin-left: auto !important;
+        margin-right: 10px;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        flex-grow: 1;
+        min-width: 0;
+    }
+
+    .navbar-brand-wrapper {
+        flex-grow: 1;
+        overflow: hidden;
+    }
+}
