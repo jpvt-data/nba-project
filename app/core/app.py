@@ -85,17 +85,22 @@ def afficher_page(pathname, session):
         return connexion_layout
 
     routes = {
-        "/": accueil_layout,
-        "/statistiques": statistiques_layout,
-        "/joueurs": joueurs_layout,
-        "/pronostics": pronostics_layout,
-        "/classement": classement_layout,
-        "/palmares": palmares_layout,
-        "/connexion": connexion_layout,
-        "/admin": admin_layout
+        "/": accueil_layout(),
+        "/statistiques": statistiques_layout(),
+        "/joueurs": joueurs_layout(),
+        "/pronostics": pronostics_layout(),
+        "/classement": classement_layout(),
+        "/palmares": palmares_layout(),
+        "/connexion": connexion_layout,  # celui-ci est déjà un `html.Div`, donc PAS à appeler
+        "/admin": admin_layout()
     }
 
-    return routes.get(pathname, lambda: html.H1("404 – Page introuvable", style={"color": "white", "textAlign": "center"}))()
+    layout = routes.get(pathname)
+    if layout:
+        return layout
+    else:
+        return html.H1("404 – Page introuvable", style={"color": "white", "textAlign": "center"})
+
 
 # ======================================
 # 📆 Callback affichage des matchs des 7 prochains jours (Accueil)
