@@ -67,7 +67,8 @@ app.layout = html.Div([
     dcc.Location(id="forcage_url", refresh=True),  # nouveau redirecteur
     dcc.Store(id="session_utilisateur", storage_type="session"),
     navbar(),
-    html.Div(id="contenu_page", style={"padding": "20px"})
+    html.Div(id="contenu_page", style={"padding": "20px"}),
+    html.Div(id="fake_trigger", style={"display": "none"})
 ])
 
 
@@ -144,7 +145,13 @@ def afficher_matchs(path):
                             id={"type": "btn_prono", "game_id": m["game_id"], "team": tricode_away},
                             className="bouton-prono",
                             n_clicks=0
-                        )
+                        ),
+                        # 🔍 Print bouton extérieur
+                        html.Div(style={"display": "none"}, children=print("🔍 Bouton créé :", {
+                            "type": "btn_prono", 
+                            "game_id": m["game_id"], 
+                            "team": tricode_away
+                        }))
                     ], className="carte-equipe"),
 
                     html.Div("VS", className="carte-vs"),
@@ -160,7 +167,13 @@ def afficher_matchs(path):
                             id={"type": "btn_prono", "game_id": m["game_id"], "team": tricode_home},
                             className="bouton-prono",
                             n_clicks=0
-                        )
+                        ),
+                        # 🔍 Print bouton domicile
+                        html.Div(style={"display": "none"}, children=print("🔍 Bouton créé :", {
+                            "type": "btn_prono", 
+                            "game_id": m["game_id"], 
+                            "team": tricode_home
+                        }))
                     ], className="carte-equipe"),
 
                 ], className="carte-ligne"),
@@ -171,6 +184,58 @@ def afficher_matchs(path):
 
     return html.Div(cartes, className="grille-matchs")
 
+# ======================================
+# 🧠 Callback : Enregistrement d'un pronostic
+# ======================================
+
+from dash import ctx, ALL
+from scripts.db import inserer_pronostic
+
+@app.callback(
+    Output("fake_trigger", "children"),  # Ne sert qu'à déclencher le callback
+    Input({"type": "btn_prono", "game_id": ALL, "team": ALL}, "n_clicks_timestamp"),
+    State("session_utilisateur", "data"),
+    prevent_initial_call=True
+)
+def enregistrer_pronostic(n_clicks_list, session):
+    # Vérification utilisateur connecté
+    if not session or not session.get("pseudo"):
+        return dash.no_update
+
+    pseudo = session["pseudo"]
+
+    # 🔒 Aucun bouton cliqué
+    if not any(n_clicks_list):
+        return dash.no_update
+
+    # 🔍 Trouver l'index du bouton cliqué le plus récemment
+    index_clique = max(
+        [(i, ts) for i, ts in enumerate(n_clicks_list) if ts],
+        key=lambda x: x[1],
+        default=(None, None)
+    )[0]
+
+    if index_clique is None:
+        return dash.no_update
+
+    # Récupérer l’ID du bouton cliqué
+    ctx_id = ctx.inputs_list[0][index_clique]["id"]
+    game_id = ctx_id.get("game_id")
+    team = ctx_id.get("team")
+
+    if not game_id or not team:
+        return dash.no_update
+
+    # ✅ Enregistrement en base
+    print(f"👤 Insertion en base : {pseudo} {game_id} {team}")
+    success = inserer_pronostic(pseudo, game_id, team)
+
+    if success:
+        print(f"✅ Pronostic ajouté : {pseudo} → {team} pour {game_id}")
+    else:
+        print(f"🔁 Pronostic déjà existant pour {pseudo} sur {game_id}")
+
+    return f"{pseudo} → {team} pour {game_id} (clic enregistré)"
 
 
 # ======================================
