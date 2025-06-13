@@ -5,4 +5,4 @@ nba_api
 python-dotenv
 psycopg2-binary
 SQLAlchemy
-psycopg2
+dash-bootstrap-components

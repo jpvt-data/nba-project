@@ -22,7 +22,7 @@ RUN apt-get update && \
     echo "fr_FR.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen fr_FR.UTF-8 && \
     pip install --upgrade pip && \
-    pip install dash pandas requests nba_api dash-bootstrap-components
+    pip install -r requirements.txt
 
 # 🚀 Commande par défaut : lancer Dash
 CMD ["python", "app/core/app.py"]
