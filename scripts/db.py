@@ -70,6 +70,28 @@ def inserer_pronostic(utilisateur, game_id, equipe_pronostiquee):
     finally:
         conn.close()
 
+# ================================================
+# 🔍 Vérifie si un utilisateur a déjà voté ce match
+# ================================================
+def a_deja_vote(utilisateur, game_id):
+    conn = connect_db()
+    if conn is None:
+        return None
+
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                SELECT equipe_pronostiquee FROM pronostics
+                WHERE utilisateur = %s AND game_id = %s;
+            """, (utilisateur, str(game_id)))
+            result = cur.fetchone()
+            return result[0] if result else None
+    except Exception as e:
+        print("❌ Erreur lors de la vérification de vote :", e)
+        return None
+    finally:
+        conn.close()
+
 
 if __name__ == "__main__":
     create_table_pronostics()

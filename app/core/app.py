@@ -106,11 +106,16 @@ def afficher_page(pathname, session):
 # 📆 Callback affichage des matchs des 7 prochains jours (Accueil)
 # ======================================
 
+from dash import html, Input, Output, State
+from scripts.db import a_deja_vote
+import dash_bootstrap_components as dbc
+
 @app.callback(
     Output("bloc_matchs", "children"),
-    Input("url", "pathname")
+    Input("url", "pathname"),
+    State("session_utilisateur", "data")
 )
-def afficher_matchs(path):
+def afficher_matchs(path, session):
     if path != "/":
         return None
 
@@ -119,7 +124,6 @@ def afficher_matchs(path):
 
     for jour in jours:
         for m in jour["matchs"]:
-            # Ligne d'infos contextuelle
             ligne_infos = m["game_label"] or ""
 
             if pd.notnull(m.get("series_game_number")) and isinstance(m["series_game_number"], str):
@@ -128,18 +132,45 @@ def afficher_matchs(path):
             if str(m.get("if_necessary")).lower() == "true":
                 ligne_infos += " – Si Nécessaire"
 
-            # 🔠 Tricodes
             tricode_away = m["away"]
             tricode_home = m["home"]
 
-            carte = html.Div([
+            # ✅ Vérifie si déjà voté
+            vote_existant = a_deja_vote(session["pseudo"], m["game_id"]) if session and session.get("pseudo") else None
 
-                html.Div(f"{jour['date']} – {m['heure']}", className="carte-date"),
-                html.Div(ligne_infos, className="carte-infos"),
+            if vote_existant:
+                bloc_boutons = html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Img(
+                                src=f"https://cdn.nba.com/logos/nba/{m['away_id']}/global/L/logo.svg",
+                                className="carte-logo"
+                            )
+                        ], className="carte-equipe"),
 
-                html.Div([
+                        html.Div("VS", className="carte-vs"),
 
-                    # Bloc équipe extérieure
+                        html.Div([
+                            html.Img(
+                                src=f"https://cdn.nba.com/logos/nba/{m['home_id']}/global/L/logo.svg",
+                                className="carte-logo"
+                            )
+                        ], className="carte-equipe"),
+                    ], className="carte-ligne"),
+
+                    html.Div("Pronostic déjà enregistré", className="carte-vote-label"),
+
+                    html.Button(
+                        f"Modifier mon vote ({vote_existant})",
+                        id={"type": "btn_prono", "game_id": m["game_id"], "team": vote_existant},
+                        className="bouton-prono modifiable",
+                        n_clicks=0
+                    )
+                ], className="carte-vote-unique")
+
+            else:
+                # 🟢 Deux boutons classiques
+                bloc_boutons = html.Div([
                     html.Div([
                         html.Img(
                             src=f"https://cdn.nba.com/logos/nba/{m['away_id']}/global/L/logo.svg",
@@ -150,18 +181,9 @@ def afficher_matchs(path):
                             id={"type": "btn_prono", "game_id": m["game_id"], "team": tricode_away},
                             className="bouton-prono",
                             n_clicks=0
-                        ),
-                        # 🔍 Print bouton extérieur
-                        html.Div(style={"display": "none"}, children=print("🔍 Bouton créé :", {
-                            "type": "btn_prono", 
-                            "game_id": m["game_id"], 
-                            "team": tricode_away
-                        }))
+                        )
                     ], className="carte-equipe"),
-
                     html.Div("VS", className="carte-vs"),
-
-                    # Bloc équipe domicile
                     html.Div([
                         html.Img(
                             src=f"https://cdn.nba.com/logos/nba/{m['home_id']}/global/L/logo.svg",
@@ -172,22 +194,31 @@ def afficher_matchs(path):
                             id={"type": "btn_prono", "game_id": m["game_id"], "team": tricode_home},
                             className="bouton-prono",
                             n_clicks=0
-                        ),
-                        # 🔍 Print bouton domicile
-                        html.Div(style={"display": "none"}, children=print("🔍 Bouton créé :", {
-                            "type": "btn_prono", 
-                            "game_id": m["game_id"], 
-                            "team": tricode_home
-                        }))
+                        )
                     ], className="carte-equipe"),
+                ], className="carte-ligne")
 
-                ], className="carte-ligne"),
+            # 🔔 Bloc message de confirmation (invisible par défaut)
+            message_feedback = dbc.Alert(
+                id={"type": "alert_feedback", "game_id": m["game_id"]},
+                is_open=False,
+                duration=4000,
+                dismissable=True,
+                color="success",
+                style={"marginTop": "12px"}
+            )
 
+            carte = html.Div([
+                html.Div(f"{jour['date']} – {m['heure']}", className="carte-date"),
+                html.Div(ligne_infos, className="carte-infos"),
+                bloc_boutons,
+                message_feedback
             ], className="carte-match")
 
             cartes.append(carte)
 
     return html.Div(cartes, className="grille-matchs")
+
 
 # ======================================
 # 🧠 Callback : Enregistrement d'un pronostic
