@@ -42,12 +42,7 @@ def accueil_layout():
                             html.Strong("Clique sur le bouton sous l'équipe que tu vois gagnante.")
                         ]),
                         html.P([
-                            "🚨 ",
-                            html.Strong("Attention : une fois ton choix validé, il sera définitif."),
-                            " Impossible de revenir en arrière !"
-                        ]),
-                        html.P([
-                            "⏳ Tu peux pronostiquer jusqu’à l’heure de début du match.",
+                            "⏳ Tu peux pronostiquer ou modifier ton vote jusqu’à l’heure de début du match.",
                             " Ensuite, c’est verrouillé automatiquement !"
                         ])
                     ], className="texte-description"),

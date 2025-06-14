@@ -60,15 +60,19 @@ def inserer_pronostic(utilisateur, game_id, equipe_pronostiquee):
             cur.execute("""
                 INSERT INTO pronostics (utilisateur, game_id, equipe_pronostiquee)
                 VALUES (%s, %s, %s)
-                ON CONFLICT (utilisateur, game_id) DO NOTHING;
+                ON CONFLICT (utilisateur, game_id) DO UPDATE
+                SET equipe_pronostiquee = EXCLUDED.equipe_pronostiquee,
+                    date_pronostic = CURRENT_TIMESTAMP;
             """, (utilisateur, game_id, equipe_pronostiquee))
             conn.commit()
-            return cur.rowcount > 0  # True si insertion réussie, False si déjà existant
+            print("✅ Vote inséré ou mis à jour")
+            return True
     except Exception as e:
-        print("❌ Erreur lors de l'insertion du pronostic :", e)
+        print("❌ Erreur lors de l'insertion ou MAJ du pronostic :", e)
         return False
     finally:
         conn.close()
+
 
 # ================================================
 # 🔍 Vérifie si un utilisateur a déjà voté ce match
@@ -89,6 +93,28 @@ def a_deja_vote(utilisateur, game_id):
     except Exception as e:
         print("❌ Erreur lors de la vérification de vote :", e)
         return None
+    finally:
+        conn.close()
+
+# ========================================
+# ❌ Suppression du pronostic d’un joueur
+# ========================================
+def supprimer_pronostic(utilisateur, game_id):
+    conn = connect_db()
+    if conn is None:
+        return False
+
+    try:
+        with conn.cursor() as cur:
+            cur.execute("""
+                DELETE FROM pronostics
+                WHERE utilisateur = %s AND game_id = %s;
+            """, (utilisateur, str(game_id)))
+            conn.commit()
+            return cur.rowcount > 0
+    except Exception as e:
+        print("❌ Erreur lors de la suppression :", e)
+        return False
     finally:
         conn.close()
 
