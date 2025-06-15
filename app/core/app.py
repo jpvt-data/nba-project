@@ -14,14 +14,11 @@ chemin_assets = os.path.join(racine, "assets")
 
 # 📄 Imports internes
 from app.pages.accueil_layout import accueil_layout
-from app.pages.statistiques_layout import statistiques_layout
-from app.pages.joueurs_layout import joueurs_layout
-from app.pages.pronostics_layout import pronostics_layout
-from app.pages.classement_layout import classement_layout
-from app.pages.palmares_layout import palmares_layout
+from app.pages.swishrank_layout import swishrank_layout
+from app.pages.statsnba_layout import statsnba_layout
+from app.pages.profil_layout import profil_layout
 from app.pages.connexion_layout import connexion_layout
-from app.pages.admin_layout import admin_layout
-from app.composants.menu import navbar
+from app.composants.menu import navbar, register_navbar_callbacks
 from app.core.get_matchs_7j import get_matchs_7j
 from scripts.db import a_deja_vote, inserer_pronostic, supprimer_pronostic
 
@@ -33,6 +30,7 @@ app = Dash(__name__,
            external_stylesheets=[dbc.themes.DARKLY],
            assets_folder=chemin_assets,
            title="NBA Dashboard")
+register_navbar_callbacks(app)
 server = app.server
 
 # ======================================
@@ -76,13 +74,10 @@ def afficher_page(pathname, session):
         return connexion_layout
     routes = {
         "/": accueil_layout(),
-        "/statistiques": statistiques_layout(),
-        "/joueurs": joueurs_layout(),
-        "/pronostics": pronostics_layout(),
-        "/classement": classement_layout(),
-        "/palmares": palmares_layout(),
+        "/swishrank": swishrank_layout(),
+        "/statsnba": statsnba_layout(),
+        "/profil": profil_layout(),
         "/connexion": connexion_layout,
-        "/admin": admin_layout()
     }
     return routes.get(pathname, html.H1("404 – Page introuvable", style={"color": "white"}))
 

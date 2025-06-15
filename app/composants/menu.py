@@ -34,13 +34,9 @@ def navbar():
             dbc.Collapse(
                 dbc.Nav([
                     lien("accueil.png", "Accueil", "/"),
-                    lien("statistiques.png", "Statistiques", "/statistiques"),
-                    lien("joueurs.png", "Joueurs", "/joueurs"),
-                    lien("pronostics.png", "Pronostics", "/pronostics"),
-                    lien("classement.png", "Classement", "/classement"),
-                    lien("palmares.png", "Palmarès", "/palmares"),
-                    lien("connection.png", "Connexion", "/connexion"),
-                    lien("admin.png", "Admin", "/admin")
+                    lien("classement.png", "SwishRank", "/swishrank"),
+                    lien("statistiques.png", "Stats NBA", "/statsnba"),
+                    lien("connection.png", "Profil", "/profil"),
                 ], className="ms-auto", navbar=True),
                 id="navbar-collapse",
                 is_open=False,
@@ -52,4 +48,21 @@ def navbar():
         sticky="top",
         className="navbar-custom"
     )
+
+# ======================================
+# 🔁 Callback pour le menu hamburger (mobile)
+# ======================================
+
+from dash.dependencies import Input, Output, State
+
+def register_navbar_callbacks(app):
+    @app.callback(
+        Output("navbar-collapse", "is_open"),
+        Input("navbar-toggler", "n_clicks"),
+        State("navbar-collapse", "is_open")
+    )
+    def toggle_navbar(n, is_open):
+        if n:
+            return not is_open
+        return is_open
 

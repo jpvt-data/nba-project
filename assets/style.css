@@ -88,6 +88,10 @@ p,
     transition: background-color 0.2s ease-in-out;
 }
 
+.navbar-custom {
+    padding-right: 24px;
+}
+
 .nav-link-custom:hover {
     background-color: rgba(255, 255, 255, 0.05);
 }
