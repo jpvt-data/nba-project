@@ -38,13 +38,30 @@ server = app.server
 # ======================================
 # 🖼️ Layout général
 # ======================================
+
 app.layout = html.Div([
     dcc.Location(id="url"),
     dcc.Store(id="session_utilisateur", storage_type="session"),
     navbar(),
     html.Div(id="contenu_page", style={"padding": "20px"}),
+    html.Footer([
+        html.Hr(),
+        html.Div([
+            html.P(["© 2025 JPVT – Appli NBA non commerciale entre amis. "
+                "Code sous licence MIT. Logos NBA affichés à titre privé. ",
+                html.A("Voir licence complète", href="https://github.com/jpvt-data/nba-project/blob/main/LICENSE.md", target="_blank")
+            ])
+        ], style={
+            "textAlign": "center",
+            "fontSize": "0.8rem",
+            "color": "#aaa",
+            "padding": "10px 20px",
+            "margin": "0 auto"
+        })
+    ], style={"marginTop": "40px"}),
     html.Div(id="fake_trigger", style={"display": "none"})
 ])
+
 
 # ======================================
 # 🔁 Routing

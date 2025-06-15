@@ -4,7 +4,7 @@
 
 Ce projet utilise du code open source sous licence MIT, notamment la bibliothèque `nba_api` :
 
-> Copyright (c) [2025] Jean Paul  
+> Copyright (c) [2025] JPVT  
 > 
 > Permission is hereby granted, free of charge, to any person obtaining a copy  
 > of this software and associated documentation files (the "Software"), to deal  
