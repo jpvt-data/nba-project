@@ -20,7 +20,7 @@ jobs:
       - name: 🐘 Exporter les pronostics depuis PostgreSQL
         run: |
           pip install -r requirements.txt
-          python scripts/export_pronostics.py
+          python scripts/tools/export_pronostics.py
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
