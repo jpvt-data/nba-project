@@ -29,19 +29,8 @@ def navbar():
                 href="/"
             ),
 
-            dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+            dbc.NavItem(html.Div(id="menu-profil"), className="ms-auto d-flex align-items-center"),
 
-            dbc.Collapse(
-                dbc.Nav([
-                    lien("accueil.png", "Accueil", "/"),
-                    lien("classement.png", "SwishRank", "/swishrank"),
-                    lien("statistiques.png", "Stats NBA", "/statsnba"),
-                    lien("connection.png", "Profil", "/profil"),
-                ], className="ms-auto", navbar=True),
-                id="navbar-collapse",
-                is_open=False,
-                navbar=True
-            ),
         ],
         color="dark",
         dark=True,

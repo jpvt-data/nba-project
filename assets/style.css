@@ -381,3 +381,19 @@ p,
         overflow: hidden;
     }
 }
+
+.avatar-navbar {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid white;
+    margin-bottom: 4px;
+}
+
+.pseudo-navbar {
+    font-size: 0.8rem;
+    color: #ddd;
+    text-align: center;
+}
+
