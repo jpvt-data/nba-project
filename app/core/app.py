@@ -115,7 +115,7 @@ def afficher_page(pathname, session):
         return connexion_layout
 
     # ✅ Routage si connecté
-    if pathname == "/accueil" or pathname == "/":
+    if pathname == "/":
         return accueil_layout()
     elif pathname == "/profil":
         return profil_layout()
@@ -135,7 +135,7 @@ def afficher_page(pathname, session):
     State("session_utilisateur", "data")
 )
 def afficher_matchs(path, session):
-    if path != "/accueil":
+    if path != "/":
         return None
 
     pseudo = session.get("pseudo") if session else None
@@ -265,7 +265,7 @@ def verifier_connexion(n_clicks, pseudo, mdp):
         return dash.no_update, dash.no_update, "⚠️ Format JSON invalide."
 
     if users.get(pseudo) == mdp:
-        return {"connecté": True, "pseudo": pseudo}, "/accueil", ""
+        return {"connecté": True, "pseudo": pseudo}, "/", ""
     
     return dash.no_update, dash.no_update, "Identifiants incorrects."
 

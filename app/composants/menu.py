@@ -22,11 +22,14 @@ def navbar():
     return dbc.Navbar(
         children=[
             dbc.NavbarBrand(
-                html.Div([
-                    html.Img(src="/assets/logos/nba_logo.png", className="navbar-logo"),
-                    html.Span("Swish League", className="nav-titre")
-                ], className="d-flex align-items-center navbar-brand-wrapper"),
-                href="/"
+                dbc.NavLink(
+                    href="/",
+                    className="d-flex align-items-center navbar-brand-wrapper",
+                    children=[
+                        html.Img(src="/assets/logos/nba_logo.png", className="navbar-logo"),
+                        html.Span("Swish League", className="nav-titre")
+                    ]
+                )
             ),
 
             dbc.NavItem(html.Div(id="menu-profil"), className="ms-auto d-flex align-items-center"),
