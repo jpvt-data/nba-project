@@ -11,8 +11,8 @@ from zoneinfo import ZoneInfo
 import os
 
 # 📂 Chemins d'entrée/sortie
-chemin_json = "data/raw/saison_2024_2025.json"
-chemin_csv = "data/processed/matchs.csv"
+chemin_json = "data/raw/saison_2000_2001.json"
+chemin_csv = "data/raw/matchs_2000_2001.csv"
 
 # 📥 Chargement du JSON brut
 with open(chemin_json, encoding="utf-8") as f:

@@ -30,8 +30,9 @@ HEADERS = {
 }
 
 # 🧪 À MODIFIER POUR TEST
-DATE_DEBUT = "2023-09-01"
-DATE_FIN = "2024-08-31"
+DATE_DEBUT = "2009-09-01"
+DATE_FIN = "2010-08-31"
+
 
 # 🧠 Convertit une date en saison NBA (format YYYY_YYYY)
 def saison_from_date(date_obj):
@@ -40,6 +41,7 @@ def saison_from_date(date_obj):
         return f"{annee}_{annee + 1}"
     else:  # Janvier à Août
         return f"{annee - 1}_{annee}"
+
 
 # 📅 Génération de la liste de dates à traiter
 date_debut = datetime.strptime(DATE_DEBUT, "%Y-%m-%d")
