@@ -1,8 +1,0 @@
-game_id,date_match,heure_match,utilisateur,date_pronostic,équipe_domicile,score_domicile,équipe_extérieure,score_extérieur,équipe_pronostiquée,vainqueur_réel,pronostic_correct,statut_match,type_match
-42400404,2025-06-14,02:30,Polo,2025-06-13 10:03:03.635726,IND,104,OKC,111,OKC,OKC,True,Final,NBA Finals
-42400404,2025-06-14,02:30,Tout_Sec,2025-06-13 14:39:42.358200,IND,104,OKC,111,OKC,OKC,True,Final,NBA Finals
-42400404,2025-06-14,02:30,admin33,2025-06-13 08:27:45.017971,IND,104,OKC,111,OKC,OKC,True,Final,NBA Finals
-42400405,2025-06-17,02:30,Milk_it,2025-06-14 19:42:17.713960,OKC,120,IND,109,OKC,OKC,True,Final,NBA Finals
-42400405,2025-06-17,02:30,Polo,2025-06-16 15:03:48.080794,OKC,120,IND,109,OKC,OKC,True,Final,NBA Finals
-42400405,2025-06-17,02:30,Tout_Sec,2025-06-14 18:59:14.874732,OKC,120,IND,109,OKC,OKC,True,Final,NBA Finals
-42400405,2025-06-17,02:30,admin33,2025-06-16 21:38:52.124896,OKC,120,IND,109,OKC,OKC,True,Final,NBA Finals
