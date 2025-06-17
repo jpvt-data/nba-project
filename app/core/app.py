@@ -161,7 +161,7 @@ def afficher_matchs(path, session):
                 bloc = html.Div([
                     html.Div([
                         html.Div([html.Img(src=f"https://cdn.nba.com/logos/nba/{m['away_id']}/global/L/logo.svg", className="carte-logo")], className="carte-equipe"),
-                        html.Div("VS", className="carte-vs"),
+                        html.Div("@", className="carte-vs"),
                         html.Div([html.Img(src=f"https://cdn.nba.com/logos/nba/{m['home_id']}/global/L/logo.svg", className="carte-logo")], className="carte-equipe"),
                     ], className="carte-ligne"),
                     html.Div(f"Prono 🔮 : Victoire {vote}", className="carte-vote-label"),

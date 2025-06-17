@@ -5,6 +5,7 @@
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 
+
 def accueil_layout(pseudo=""):
     # Bloc de gauche : avatar utilisateur
     bloc_avatar = html.Div([

@@ -1,5 +1,5 @@
 # ======================================
-# 🧠 Évaluation des pronostics utilisateurs
+# 🧠 Script d'évaluation enrichie des pronostics
 # ======================================
 
 import pandas as pd
@@ -35,7 +35,7 @@ def charger_matchs_finalises(chemin_matchs="data/processed/matchs.csv"):
         matchs = pd.read_csv(chemin_matchs)
         matchs = matchs[matchs["gameStatusText"] == "Final"].copy()
 
-        # Calcul vainqueur
+        # Détermination du vainqueur réel
         def trouver_vainqueur(row):
             if row["homeTeamScore"] > row["awayTeamScore"]:
                 return row["homeTeamTricode"]
@@ -51,35 +51,38 @@ def charger_matchs_finalises(chemin_matchs="data/processed/matchs.csv"):
         return pd.DataFrame()
 
 # ======================================
-# 🔄 Fusion et comparaison
+# 🔄 Fusion et enrichissement
 # ======================================
-def fusionner_et_evaluer(pronos, matchs):
-    # 🩹 Correction des types pour la fusion
+def fusionner_et_enrichir(pronos, matchs):
     pronos["game_id"] = pronos["game_id"].astype(str)
     matchs["gameId"] = matchs["gameId"].astype(str)
-    fusion = pronos.merge(
-        matchs,
-        left_on="game_id",
-        right_on="gameId",
-        how="inner"
-    )
 
-    fusion["bon_prono"] = fusion["equipe_pronostiquee"] == fusion["vainqueur_reel"]
-    fusion["bon_prono"] = fusion["bon_prono"].map({True: "✅", False: "❌"})
+    fusion = pronos.merge(matchs, left_on="game_id", right_on="gameId", how="inner")
 
-    colonnes_utiles = [
-        "utilisateur", "game_id", "equipe_pronostiquee", "vainqueur_reel", "bon_prono", "date_pronostic",
-        "dateParis", "homeTeamTricode", "homeTeamScore",
-        "awayTeamTricode", "awayTeamScore", "gameStatusText"
+    fusion["pronostic_correct"] = fusion["equipe_pronostiquee"] == fusion["vainqueur_reel"]
+
+    # 🧾 Réorganisation des colonnes pour analyse complète
+    df_final = fusion[[
+        "game_id", "dateParis", "heureParis", "utilisateur", "date_pronostic",
+        "homeTeamTricode", "homeTeamScore", "awayTeamTricode", "awayTeamScore",
+        "equipe_pronostiquee", "vainqueur_reel", "pronostic_correct",
+        "gameStatusText", "gameLabel"
+    ]].copy()
+
+    df_final.columns = [
+        "game_id", "date_match", "heure_match", "utilisateur", "date_pronostic",
+        "équipe_domicile", "score_domicile", "équipe_extérieure", "score_extérieur",
+        "équipe_pronostiquée", "vainqueur_réel", "pronostic_correct",
+        "statut_match", "type_match"
     ]
 
-    fusion = fusion[colonnes_utiles].sort_values(by=["dateParis", "utilisateur"])
-    return fusion
+    df_final.sort_values(by=["date_match", "utilisateur"], inplace=True)
+    return df_final
 
 # ======================================
 # 💾 Export CSV
 # ======================================
-def exporter_csv(df, chemin="data/processed/evaluation_pronostics.csv"):
+def exporter_csv(df, chemin="data/processed/pronostics_eval.csv"):
     os.makedirs(os.path.dirname(chemin), exist_ok=True)
     df.to_csv(chemin, index=False)
     print(f"✅ Fichier exporté : {chemin}")
@@ -88,11 +91,11 @@ def exporter_csv(df, chemin="data/processed/evaluation_pronostics.csv"):
 # 🚀 Lancement
 # ======================================
 if __name__ == "__main__":
-    print("📊 Lancement évaluation des pronostics...")
+    print("📊 Lancement génération du CSV pronostics_eval...")
     pronos = charger_pronostics()
     matchs = charger_matchs_finalises()
     if pronos.empty or matchs.empty:
         print("❌ Données insuffisantes, arrêt.")
     else:
-        df_eval = fusionner_et_evaluer(pronos, matchs)
+        df_eval = fusionner_et_enrichir(pronos, matchs)
         exporter_csv(df_eval)
