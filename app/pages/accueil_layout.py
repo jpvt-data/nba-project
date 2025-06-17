@@ -4,9 +4,20 @@
 
 from dash import html, dcc
 import dash_bootstrap_components as dbc
+import pandas as pd
 
 
 def accueil_layout(pseudo=""):
+    # Chargement une seule fois au début du fichier ou via cache
+    df_stats = pd.read_csv("data/processed/vue_ensemble_stats_prono_par_utilisateur.csv")
+    df_stats = df_stats[df_stats["utilisateur"] != "admin33"]
+    stats = df_stats[df_stats["utilisateur"] == pseudo]
+
+    # 🧾 Valeurs par défaut si non trouvé
+    total = int(stats["total_pronostics"].values[0]) if not stats.empty else 0
+    reussite = f"{stats['taux_reussite (%)'].values[0]}%" if not stats.empty else ""
+    equipe = stats["équipe_favorite"].values[0] if not stats.empty else "?"
+
     # Bloc de gauche : avatar utilisateur
     bloc_avatar = html.Div([
         html.Div([
@@ -20,33 +31,49 @@ def accueil_layout(pseudo=""):
             html.Div([
                 html.Div([
                     html.Span("Total pronostics", className="bloc-label"),
-                    html.Span("128", className="bloc-valeur")
+                    html.Span(f"{total}", className="bloc-valeur")
                 ], className="bloc-stat"),
 
                 html.Div([
                     html.Span("Pronos réussis", className="bloc-label"),
-                    html.Span("65%", className="bloc-valeur")
+                    html.Span(f"{reussite}", className="bloc-valeur")
                 ], className="bloc-stat"),
 
                 html.Div([
                     html.Span("Équipe favorite", className="bloc-label"),
-                    html.Span("NETS", className="bloc-valeur equipe-valeur")
+                    html.Span(f"{equipe}", className="bloc-valeur equipe-valeur")
                 ], className="bloc-stat"),
             ], className="bloc-avatar-stats")
         ], className="bloc-avatar-ligne")
     ], className="bloc-avatar-wrapper")
 
     # Bloc de droite : top 3 + bouton
+    # Tri décroissant et sélection du top 3
+    top_actifs = df_stats.sort_values(by="total_pronostics", ascending=False).head(10)
+    top3 = top_actifs.sort_values(by="taux_reussite (%)", ascending=False).head(3).reset_index(drop=True)
+    
     bloc_ranking = html.Div([
         html.H4("Top 3 Swish Rank", className="titre-bloc-droit"),
         html.Table([
             html.Thead(html.Tr([
-                html.Th("Pseudo"), html.Th("% Réussite")
+                html.Th("Swisher"), html.Th("Nb Pronostics"), html.Th("% Réussite") 
             ])),
             html.Tbody([
-                html.Tr([html.Td("Tout_Sec"), html.Td("65%")]),
-                html.Tr([html.Td("Milk_it"), html.Td("61%")]),
-                html.Tr([html.Td("Polo"), html.Td("60%")]),
+                html.Tr([
+                    html.Td(top3.loc[0, "utilisateur"]),
+                    html.Td(f"{top3.loc[0, 'total_pronostics']}"),
+                    html.Td(f"{top3.loc[0, 'taux_reussite (%)']:.1f}%")
+                ]),
+                html.Tr([
+                    html.Td(top3.loc[1, "utilisateur"]),
+                    html.Td(f"{top3.loc[1, 'total_pronostics']}"),
+                    html.Td(f"{top3.loc[1, 'taux_reussite (%)']:.1f}%")
+                ]),
+                html.Tr([
+                    html.Td(top3.loc[2, "utilisateur"]),
+                    html.Td(f"{top3.loc[2, 'total_pronostics']}"),
+                    html.Td(f"{top3.loc[2, 'taux_reussite (%)']:.1f}%")
+                ]),
             ])
         ], className="tableau-ranking"),
         html.Br(),
@@ -56,7 +83,7 @@ def accueil_layout(pseudo=""):
         )
     ], className="bloc-ranking-wrapper")
 
-        # 🏀 Image centrale entre les deux blocs (affichée uniquement en mode desktop)
+    # 🏀 Image centrale entre les deux blocs (affichée uniquement en mode desktop)
     image_centrale = html.Div(
         html.Img(
             src="/assets/images/basketteur.png",
