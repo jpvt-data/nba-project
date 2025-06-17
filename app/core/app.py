@@ -174,7 +174,7 @@ def afficher_matchs(path, session):
                         html.Img(src=f"https://cdn.nba.com/logos/nba/{m['away_id']}/global/L/logo.svg", className="carte-logo"),
                         html.Button(f"Victoire {tricode_away}", id={"type": "btn_prono", "game_id": game_id, "team": tricode_away}, className="bouton-prono", n_clicks=0)
                     ], className="carte-equipe"),
-                    html.Div("VS", className="carte-vs"),
+                    html.Div("@", className="carte-vs"),
                     html.Div([
                         html.Img(src=f"https://cdn.nba.com/logos/nba/{m['home_id']}/global/L/logo.svg", className="carte-logo"),
                         html.Button(f"Victoire {tricode_home}", id={"type": "btn_prono", "game_id": game_id, "team": tricode_home}, className="bouton-prono", n_clicks=0)
