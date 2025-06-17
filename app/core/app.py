@@ -116,7 +116,8 @@ def afficher_page(pathname, session):
 
     # ✅ Routage si connecté
     if pathname == "/":
-        return accueil_layout()
+        pseudo = session.get("pseudo", "")
+        return accueil_layout(pseudo)
     elif pathname == "/profil":
         return profil_layout()
     elif pathname == "/statsnba":
