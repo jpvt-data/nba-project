@@ -33,6 +33,10 @@ jobs:
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 
+      - name: Vue d'ensemble des pronostics
+        run:
+          python scripts/tools/3_resume_stats_pronos.py
+
       - name: 🏷️ Configuration Git
         run: |
           git config --global user.name "GitHub Actions"
