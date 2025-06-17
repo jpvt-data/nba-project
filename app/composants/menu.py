@@ -22,26 +22,18 @@ def navbar():
     return dbc.Navbar(
         children=[
             dbc.NavbarBrand(
-                html.Div([
-                    html.Img(src="/assets/logos/nba_logo.png", className="navbar-logo"),
-                    html.Span("Swish League", className="nav-titre")
-                ], className="d-flex align-items-center navbar-brand-wrapper"),
-                href="/"
+                dbc.NavLink(
+                    href="/",
+                    className="d-flex align-items-center navbar-brand-wrapper",
+                    children=[
+                        html.Img(src="/assets/logos/nba_logo.png", className="navbar-logo"),
+                        html.Span("Swish League", className="nav-titre")
+                    ]
+                )
             ),
 
-            dbc.NavbarToggler(id="navbar-toggler", n_clicks=0),
+            dbc.NavItem(html.Div(id="menu-profil"), className="ms-auto d-flex align-items-center"),
 
-            dbc.Collapse(
-                dbc.Nav([
-                    lien("accueil.png", "Accueil", "/"),
-                    lien("classement.png", "SwishRank", "/swishrank"),
-                    lien("statistiques.png", "Stats NBA", "/statsnba"),
-                    lien("connection.png", "Profil", "/profil"),
-                ], className="ms-auto", navbar=True),
-                id="navbar-collapse",
-                is_open=False,
-                navbar=True
-            ),
         ],
         color="dark",
         dark=True,

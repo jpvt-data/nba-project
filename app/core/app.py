@@ -1,51 +1,91 @@
 # ======================================
-# 🎮 App principale - NBA Dashboard multipage
+# 🏀 App NBA Dashboard
 # ======================================
 
-import sys, dash, os, json, pandas as pd
-from pathlib import Path
-from dash import Dash, html, dcc, Input, Output, State, ctx, ALL
-import dash_bootstrap_components as dbc
+# ======================================
+# 📁 Chemins de travail (racine + assets)
+# ======================================
 
-# 🔧 Chemin racine
+import sys
+import os
+import json
+import pandas as pd
+from pathlib import Path
+
 racine = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(racine))
 chemin_assets = os.path.join(racine, "assets")
 
-# 📄 Imports internes
+# ======================================
+# 📦 Dash & composants
+# ======================================
+
+import dash
+from dash import dcc, html, Input, Output, State, Dash, ctx, ALL
+import dash_bootstrap_components as dbc
+
+# ======================================
+# 📄 Imports internes – pages
+# ======================================
+
 from app.pages.accueil_layout import accueil_layout
 from app.pages.swishrank_layout import swishrank_layout
 from app.pages.statsnba_layout import statsnba_layout
 from app.pages.profil_layout import profil_layout
 from app.pages.connexion_layout import connexion_layout
+
+# ======================================
+# 🧩 Composants – menus & callbacks
+# ======================================
+
 from app.composants.menu import navbar, register_navbar_callbacks
+
+# ======================================
+# 📊 Données & logique – fonctions de base
+# ======================================
+
 from app.core.get_matchs_7j import get_matchs_7j
 from scripts.db import a_deja_vote, inserer_pronostic, supprimer_pronostic
 
-# ======================================
-# 🚀 App
-# ======================================
-app = Dash(__name__,
-           suppress_callback_exceptions=True,
-           external_stylesheets=[dbc.themes.DARKLY],
-           assets_folder=chemin_assets,
-           title="NBA Dashboard")
-register_navbar_callbacks(app)
-server = app.server
 
 # ======================================
-# 🖼️ Layout général
+# 🚀 Initialisation de l'app Dash
 # ======================================
+
+app = Dash(
+    __name__,
+    use_pages=False,
+    suppress_callback_exceptions=True,
+    external_stylesheets=[dbc.themes.DARKLY],
+    assets_folder=chemin_assets,       # 🔧 Chemin assets forcé
+    title="NBA Dashboard"              # 🏀 Titre de l'onglet
+)
+
+server = app.server
+register_navbar_callbacks(app)  # 🔁 À activer si navbar dynamique
+
+
+## ===============================
+# 🖼️ Layout général de l'application
+# ===============================
 
 app.layout = html.Div([
     dcc.Location(id="url"),
     dcc.Store(id="session_utilisateur", storage_type="session"),
-    navbar(),
+    navbar(),  # ✅ affichée pour tous, même sans être connecté
+
+    # 📄 Contenu principal des pages
     html.Div(id="contenu_page", style={"padding": "20px"}),
+
+    # ⚠️ Élément fantôme (utile pour certains callbacks invisibles)
+    html.Div(id="fake_trigger", style={"display": "none"}),
+
+    # 📜 Footer permanent
     html.Footer([
         html.Hr(),
         html.Div([
-            html.P(["© 2025 JPVT – Appli NBA non commerciale entre amis. "
+            html.P([
+                "© 2025 JPVT – Appli NBA non commerciale entre amis. "
                 "Code sous licence MIT. Logos NBA affichés à titre privé. ",
                 html.A("Voir licence complète", href="https://github.com/jpvt-data/nba-project/blob/main/LICENSE.md", target="_blank")
             ])
@@ -56,30 +96,36 @@ app.layout = html.Div([
             "padding": "10px 20px",
             "margin": "0 auto"
         })
-    ], style={"marginTop": "40px"}),
-    html.Div(id="fake_trigger", style={"display": "none"})
+    ], style={"marginTop": "40px"})
 ])
 
 
-# ======================================
-# 🔁 Routing
-# ======================================
+# ===============================
+# 🔁 Routing + Sécurité connexion
+# ===============================
+
 @app.callback(
     Output("contenu_page", "children"),
     Input("url", "pathname"),
-    Input("session_utilisateur", "data")
+    State("session_utilisateur", "data")
 )
 def afficher_page(pathname, session):
-    if not session or not session.get("connecté"):
+    # 🔐 Blocage si non connecté
+    if not session:
         return connexion_layout
-    routes = {
-        "/": accueil_layout(),
-        "/swishrank": swishrank_layout(),
-        "/statsnba": statsnba_layout(),
-        "/profil": profil_layout(),
-        "/connexion": connexion_layout,
-    }
-    return routes.get(pathname, html.H1("404 – Page introuvable", style={"color": "white"}))
+
+    # ✅ Routage si connecté
+    if pathname == "/":
+        pseudo = session.get("pseudo", "")
+        return accueil_layout(pseudo)
+    elif pathname == "/profil":
+        return profil_layout()
+    elif pathname == "/statsnba":
+        return statsnba_layout()
+    elif pathname == "/swishrank":
+        return swishrank_layout()
+    else:
+        return html.Div("Page introuvable", style={"padding": "2rem", "color": "red"})
 
 # ======================================
 # 📆 Affichage des matchs + boutons
@@ -115,7 +161,7 @@ def afficher_matchs(path, session):
                 bloc = html.Div([
                     html.Div([
                         html.Div([html.Img(src=f"https://cdn.nba.com/logos/nba/{m['away_id']}/global/L/logo.svg", className="carte-logo")], className="carte-equipe"),
-                        html.Div("VS", className="carte-vs"),
+                        html.Div("@", className="carte-vs"),
                         html.Div([html.Img(src=f"https://cdn.nba.com/logos/nba/{m['home_id']}/global/L/logo.svg", className="carte-logo")], className="carte-equipe"),
                     ], className="carte-ligne"),
                     html.Div(f"Prono 🔮 : Victoire {vote}", className="carte-vote-label"),
@@ -187,6 +233,7 @@ def enregistrer_ou_supprimer_vote(n_clicks_list, session):
 def rafraichir_affichage(_, pathname, session):
     return afficher_matchs(pathname, session)
 
+
 # ======================================
 # 🔐 Connexion utilisateur
 # ======================================
@@ -206,6 +253,9 @@ except:
     prevent_initial_call=True
 )
 def verifier_connexion(n_clicks, pseudo, mdp):
+    if not n_clicks:
+        return dash.no_update, dash.no_update, ""
+
     utilisateurs = os.getenv("USERS_JSON")
     if not utilisateurs:
         return dash.no_update, dash.no_update, "⚠️ Aucun utilisateur défini."
@@ -217,10 +267,38 @@ def verifier_connexion(n_clicks, pseudo, mdp):
 
     if users.get(pseudo) == mdp:
         return {"connecté": True, "pseudo": pseudo}, "/", ""
+    
     return dash.no_update, dash.no_update, "Identifiants incorrects."
 
-# ======================================
+# ===============================
+# ▶️ Avatar
+# ===============================
+
+@app.callback(
+    Output("menu-profil", "children"),
+    Input("session_utilisateur", "data"),
+    Input("url", "pathname")
+)
+def afficher_avatar_utilisateur(session, pathname):
+    # 🛑 Si non connecté OU sur page connexion → rien à afficher
+    if not session or not session.get("connecté") or pathname == "/connexion":
+        return html.Div()
+
+    pseudo = session.get("pseudo")
+
+    return dbc.NavLink(
+        href="/profil",
+        className="nav-link-custom d-flex flex-column align-items-center",
+        children=[
+            html.Img(src=f"/assets/avatars/{pseudo}.png", className="avatar-navbar"),
+            html.Div(pseudo, className="pseudo-navbar")
+        ]
+    )
+
+
+# ===============================
 # ▶️ Lancement local
-# ======================================
+# ===============================
+
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 10000)))

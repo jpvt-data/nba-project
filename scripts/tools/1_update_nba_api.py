@@ -11,7 +11,7 @@ import time
 
 # 📁 Chemin vers le fichier CSV principal
 import pathlib
-racine = pathlib.Path(__file__).resolve().parents[1]
+racine = pathlib.Path(__file__).resolve().parents[2]
 fichier_matchs_csv = os.path.join(racine, "data", "processed", "matchs.csv")
 print(f"📁 Chargement du fichier : {fichier_matchs_csv}")
 

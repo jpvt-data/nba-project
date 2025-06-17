@@ -27,6 +27,12 @@ h1, h2, h3, h4 {
     text-align: left;
 }
 
+.section-bienvenue {
+    margin-bottom: 30px;
+}
+
+
+
 .titre-texte {
     font-size: 2.4rem;
     font-weight: 700;
@@ -38,7 +44,7 @@ h1, h2, h3, h4 {
     font-weight: 700;
     color: #ffffff;
     margin-top: 20px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .titre-jour {
@@ -324,7 +330,7 @@ p,
     opacity: 0;
     transform: translateY(-10px);
     animation: apparition-ligne 0.8s ease forwards;
-    margin: 40px auto 30px auto;
+    margin: 20px auto 30px auto;
 }
 
 @keyframes apparition-ligne {
@@ -381,3 +387,166 @@ p,
         overflow: hidden;
     }
 }
+
+.avatar-navbar {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid white;
+    margin-bottom: 4px;
+}
+
+.pseudo-navbar {
+    font-size: 0.8rem;
+    color: #ddd;
+    text-align: center;
+}
+
+/* ============================================================
+   🎨 AVATAR UTILISATEUR — Bloc gauche de la page Accueil
+   ============================================================ */
+
+.bloc-avatar-wrapper {
+    background-color: #1a1a1a;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 40px;
+
+    /* 🔧 Taille et centrage — version desktop */
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 90%;
+}
+
+.bloc-avatar-ligne {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.bloc-avatar-gauche {
+    text-align: center;
+}
+
+.bloc-avatar-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 12px;
+    object-fit: cover;
+    margin-bottom: 8px;
+}
+
+.bloc-avatar-nom {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+}
+
+.bloc-avatar-stats {
+    width: 100%;
+    max-width: 320px;
+}
+
+.bloc-stat {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #333;
+    padding: 8px 0;
+}
+
+.bloc-label {
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
+.bloc-valeur {
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.equipe-valeur {
+    color: #e54035;
+}
+
+
+/* ============================================================
+   🏆 SWISH RANKING — Bloc droit de la page Accueil
+   ============================================================ */
+
+.bloc-ranking-wrapper {
+    background-color: #1e1e1e;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 40px;
+
+    /* 🧱 Taille uniforme avec bloc-avatar */
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 90%;
+}
+
+.titre-bloc-droit {
+    color: white;
+    font-size: 1.3rem;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.tableau-ranking {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.tableau-ranking th,
+.tableau-ranking td {
+    padding: 8px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+    color: white;
+}
+
+.tableau-ranking th {
+    color: #bbb;
+    font-weight: bold;
+}
+
+
+/* 🔘 BOUTON LIEN RANK */
+
+.bouton-sw {
+    display: inline-block;
+    background-color: #e54035;
+    color: white;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    margin-top: 16px;
+}
+
+.bouton-sw:hover {
+    background-color: #c22b25;
+}
+
+
+/* ============================================================
+   📱 RESPONSIVE — Marges sur mobile + padding ajusté
+   ============================================================ */
+
+@media (min-width: 992px) {
+    .bloc-avatar-wrapper,
+    .bloc-ranking-wrapper {
+        padding: 24px 32px;
+    }
+}
+
+
