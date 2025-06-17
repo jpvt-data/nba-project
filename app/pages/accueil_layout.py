@@ -55,28 +55,36 @@ def accueil_layout(pseudo=""):
         )
     ], className="bloc-ranking-wrapper")
 
+        # 🏀 Image centrale entre les deux blocs (affichée uniquement en mode desktop)
+    image_centrale = html.Div(
+        html.Img(
+            src="/assets/images/basketteur.png",
+            style={"height": "300px"},
+            alt="Basketteur central",
+            className="d-none d-lg-block"
+        ),
+        style={"textAlign": "center", "margin": "auto"}
+    )
+
+
     return html.Div(
         style={"backgroundColor": "#121212", "minHeight": "100vh"},
         children=[
             html.Div([
-                html.H2("Bienvenue dans Swish League !", className="titre-texte section-bienvenue"),
+                html.H2("Ton Swish Score", className="titre-bloc section-bienvenue"),
 
                 dbc.Row([
-                    dbc.Col(bloc_avatar, lg=6, sm=12),
-                    dbc.Col(bloc_ranking, lg=6, sm=12)
-                ], className="gy-4"),
+                    dbc.Col(bloc_avatar, lg=5, sm=12),
+                    dbc.Col(image_centrale, lg=2, sm=0),  # image uniquement visible en desktop
+                    dbc.Col(bloc_ranking, lg=5, sm=12)
+                ], className="gy-4 align-items-center"),
 
                 html.Hr(className="ligne-separatrice"),
 
                 # 📆 Bloc 1 – Matchs à pronostiquer
-                html.H2("Matchs à pronostiquer", className="titre-bloc"),
+                html.H2("Pronostics en cours", className="titre-bloc"),
                 html.Div([
                     html.P("Voici les matchs des 7 prochains jours à ne surtout pas rater."),
-                    html.P([
-                        "Avant de faire ton choix, tu peux consulter les pages ",
-                        html.Strong("Statistiques, Joueurs ou Classement"),
-                        " pour affiner ton analyse."
-                    ]),
                     html.P([
                         "👉 ",
                         html.Strong("Clique sur le bouton sous l'équipe que tu vois gagnante.")
