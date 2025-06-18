@@ -129,7 +129,7 @@ def accueil_layout(pseudo=""):
                 html.H2("Classement NBA", className="titre-bloc"),
                 html.Div(id="bloc_classement"),
                 html.Div(
-                    dcc.Link("Accès aux Stats NBA", href="/swishrank", className="bouton-sw"),
+                    dcc.Link("Accès aux Stats NBA", href="/statsnba", className="bouton-sw"),
                     style={"textAlign": "center"}
                 ),
 

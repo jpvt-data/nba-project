@@ -233,6 +233,69 @@ def enregistrer_ou_supprimer_vote(n_clicks_list, session):
 def rafraichir_affichage(_, pathname, session):
     return afficher_matchs(pathname, session)
 
+# ======================================
+# 📊 Callback – Affichage Classement NBA par filtres
+# ======================================
+
+from nba_api.stats.static import teams
+from dash import callback, Output, Input, html
+import pandas as pd
+
+# ✅ Chargement des infos équipes depuis nba_api
+dict_equipes = {team["id"]: team for team in teams.get_teams()}
+
+@app.callback(
+    Output("tableau_classement", "children"),
+    Input("filtre_type_saison", "value"),
+    Input("filtre_annee", "value"),
+    Input("filtre_conference", "value")
+)
+def afficher_tableau_classement(type_saison, annee, conference):
+    # 🚧 Limitation temporaire
+    if type_saison != "regular":
+        return html.P("⚠️ Seule la saison régulière est disponible pour le moment.",
+                      className="texte-secondaire")
+
+    # 📥 Chargement et filtrage
+    df = pd.read_csv("data/processed/saison/classement_conf_saisons_total.csv")
+    df = df[(df["Année"] == annee) & (df["CONFERENCE"] == conference)]
+    df = df.sort_values("RANK")
+
+    # 📋 Colonnes utiles
+    colonnes = ["RANK", "TEAM_ID", "WINS", "LOSSES", "PCT", "HOME", "AWAY", "CONF", "GB"]
+
+    if df.empty:
+        return html.P("Aucune donnée trouvée pour les filtres sélectionnés.", className="texte-secondaire")
+
+    lignes = []
+    for _, row in df[colonnes].iterrows():
+        equipe_info = dict_equipes.get(int(row["TEAM_ID"]), {})
+        nom_equipe = equipe_info.get("full_name", "Équipe inconnue")
+        logo_url = f"https://cdn.nba.com/logos/nba/{int(row['TEAM_ID'])}/global/L/logo.svg"
+
+        equipe_cell = html.Div([
+            html.Img(src=logo_url, style={"height": "26px", "marginRight": "10px"}),
+            html.Span(nom_equipe)
+        ], style={"display": "flex", "alignItems": "center"})
+
+        lignes.append(html.Tr([
+            html.Td(row["RANK"]),
+            html.Td(equipe_cell),
+            html.Td(row["WINS"]),
+            html.Td(row["LOSSES"]),
+            html.Td(f"{row['PCT']:.3f}"),
+            html.Td(row["HOME"]),
+            html.Td(row["AWAY"]),
+            html.Td(row["CONF"]),
+            html.Td(row["GB"])
+        ]))
+
+    entetes = ["#", "Équipe", "V", "D", "%", "Domicile", "Extérieur", "Conf", "Écart"]
+
+    return html.Table([
+        html.Thead(html.Tr([html.Th(col) for col in entetes])),
+        html.Tbody(lignes)
+    ], className="tableau-ranking")
 
 # ======================================
 # 🔐 Connexion utilisateur
