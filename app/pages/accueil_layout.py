@@ -127,17 +127,12 @@ def accueil_layout(pseudo=""):
                 html.Hr(className="ligne-separatrice"),
 
                 html.H2("Classement NBA", className="titre-bloc"),
-                dcc.RadioItems(
-                    id="type_classement",
-                    options=[
-                        {"label": "Saison régulière", "value": "saison"},
-                        {"label": "Playoffs", "value": "playoffs"},
-                    ],
-                    value="saison",
-                    inline=True,
-                    className="toggle-classement"
-                ),
                 html.Div(id="bloc_classement"),
+                html.Div(
+                    dcc.Link("Accès aux Stats NBA", href="/swishrank", className="bouton-sw"),
+                    style={"textAlign": "center"}
+                ),
+
 
                 html.Hr(className="ligne-separatrice"),
                 html.H2("Dernières infos NBA", className="titre-bloc"),

@@ -23,18 +23,6 @@ Un projet construit à la main, en open-source, pour mêler passion NBA, donnée
 - Backend Python, Dash, fichiers ou DB
 - Déploiement sur Render (via Docker)
 
-## Instructions GPT
-
-GPT doit :
-- Suivre le projet comme assistant produit + dev
-- Respecter le calendrier NBA (octobre 2025)
-- Utiliser uniquement des outils gratuits et open-source
-- Structurer le projet dans un dépôt GitHub clair
-- Proposer chaque semaine une étape clé à avancer
-- Ne jamais intégrer de Machine Learning avant la V2
-- Ajouter des maquettes visuelles ou wireframes au besoin
-- Gérer les APIs avec test, vérification des quotas et fiabilité
-
 ## Stack
 
 - Python, Dash, Pandas, Plotly
@@ -49,12 +37,3 @@ GPT doit :
 - BallersDash pour la structure stats
 - StatMuse pour l’interaction fluide
 
----
-
-## Prochaine étape
-
-- Mettre en place le dépôt `nba-dashboard`
-- Intégrer la structure de base (`/app`, `/data`, `/scripts`)
-- Tester l’API-NBA et identifier les endpoints utiles
-- Lancer la page de connexion + pseudo
-- Créer une maquette visuelle simple de l’interface

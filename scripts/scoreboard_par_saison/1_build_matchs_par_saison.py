@@ -30,8 +30,8 @@ HEADERS = {
 }
 
 # 🧪 À MODIFIER POUR TEST
-DATE_DEBUT = "2009-09-01"
-DATE_FIN = "2010-08-31"
+DATE_DEBUT = "2011-09-01"
+DATE_FIN = "2012-08-31"
 
 
 # 🧠 Convertit une date en saison NBA (format YYYY_YYYY)
