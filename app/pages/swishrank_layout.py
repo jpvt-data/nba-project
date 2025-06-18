@@ -6,11 +6,10 @@ import pandas as pd
 from dash import html, dcc, dash_table
 import dash_bootstrap_components as dbc
 
-# Chargement des données
-df_stats = pd.read_csv("data/processed/vue_ensemble_stats_prono_par_utilisateur.csv")
-df_stats = df_stats[df_stats["utilisateur"] != "admin33"]
-
-def swishrank_layout(pseudo="Polo"):
+def swishrank_layout(pseudo):
+    # Chargement des données
+    df_stats = pd.read_csv("data/processed/vue_ensemble_stats_prono_par_utilisateur.csv")
+    df_stats = df_stats[df_stats["utilisateur"] != "admin33"]
     stats = df_stats[df_stats["utilisateur"] == pseudo]
     total = int(stats["total_pronostics"].values[0]) if not stats.empty else 0
     reussite = f"{stats['taux_reussite (%)'].values[0]}%" if not stats.empty else ""
@@ -31,133 +30,114 @@ def swishrank_layout(pseudo="Polo"):
         ], className="bloc-avatar-ligne")
     ], className="bloc-avatar-wrapper")
 
-    # Top 3
-    top_actifs = df_stats.sort_values(by="total_pronostics", ascending=False).head(10)
-    top3 = top_actifs.sort_values(by="taux_reussite (%)", ascending=False).head(3).reset_index(drop=True)
-
-    bloc_ranking = html.Div([
-        html.H4("Top 3 Swish Rank", className="titre-bloc-droit"),
-        html.Table([
-            html.Thead(html.Tr([html.Th("Swisher"), html.Th("Nb Pronostics"), html.Th("% Réussite")])),
-            html.Tbody([
-                html.Tr([html.Td(top3.loc[i, "utilisateur"]),
-                         html.Td(f"{top3.loc[i, 'total_pronostics']}"),
-                         html.Td(f"{top3.loc[i, 'taux_reussite (%)']:.1f}%")])
-                for i in range(min(3, len(top3)))
-            ])
-        ], className="tableau-ranking"),
-    ], className="bloc-ranking-wrapper")
-
     # ======================================
-    # 📋 Tableau des pronostics effectués
+    # 📋 Tableaux des pronostics & classement utilisateurs
     # ======================================
 
-    # Chargement des pronostics
+    # 📥 Chargement des pronostics
     df_pronos = pd.read_csv("data/processed/pronostics_eval.csv")
     df_pronos = df_pronos[df_pronos["utilisateur"] == pseudo]
 
-    # Conversion UTC → Heure de Paris
-    df_pronos["date_pronostic"] = pd.to_datetime(df_pronos["date_pronostic"], utc=True).dt.tz_convert("Europe/Paris")
-    df_pronos["date_pronostic"] = df_pronos["date_pronostic"].dt.strftime("%d/%m/%Y %H:%M")
+    df_pronos["date_match"] = pd.to_datetime(df_pronos["date_match"]).dt.strftime("%d/%m/%Y")
 
-    # Conversion emoji pour la colonne 'pronostic_correct'
-    df_pronos["résultat"] = df_pronos["pronostic_correct"].apply(lambda x: "✅" if x else "❌")
+    # 🏀 Détermination vainqueur
+    df_pronos["victoire"] = df_pronos.apply(
+        lambda row: row["équipe_domicile"] if row["score_domicile"] > row["score_extérieur"]
+        else row["équipe_extérieure"], axis=1
+    )
 
-    # Sélection et renommage des colonnes utiles
-    df_affiche = df_pronos[[
-        "date_pronostic", "date_match", "équipe_domicile", "score_domicile",
-        "équipe_extérieure", "score_extérieur", "équipe_pronostiquée",
-        "résultat", "type_match"
-    ]].rename(columns={
-        "date_pronostic": "Date Prono (Paris)",
+    # ✅ Emoji pour bon pronostic
+    df_pronos["✔"] = df_pronos["pronostic_correct"].apply(lambda x: "✅" if x else "❌")
+
+    # 🔢 Numérotation des pronostics
+    df_pronos = df_pronos.sort_values("date_match").reset_index(drop=True)
+    df_pronos["#"] = df_pronos.index + 1
+
+    # 🧱 Sélection et réorganisation des colonnes
+    colonnes = [
+        "#", "type_match", "date_match", "équipe_domicile", "équipe_extérieure",
+        "victoire", "équipe_pronostiquée", "✔"
+    ]
+    df_affiche = df_pronos[colonnes].rename(columns={
+        "type_match": "Type",
         "date_match": "Date Match",
         "équipe_domicile": "Domicile",
-        "score_domicile": "Score D",
         "équipe_extérieure": "Extérieur",
-        "score_extérieur": "Score E",
-        "équipe_pronostiquée": "Choix",
-        "résultat": "✔",
-        "type_match": "Type"
+        "victoire": "Victoire",
+        "équipe_pronostiquée": "Choix"
     })
 
-    # Tableau stylisé
-    tableau_pronos = dash_table.DataTable(
-        columns=[{"name": col, "id": col} for col in df_affiche.columns],
-        data=df_affiche.to_dict("records"),
-        style_table={"overflowX": "auto", "marginTop": "20px"},
-        style_cell={
-            "textAlign": "center",
-            "padding": "10px",
-            "fontFamily": "Exo 2, sans-serif",
-            "backgroundColor": "#121212",
-            "color": "white",
-            "border": "none"
-        },
-        style_header={
-            "backgroundColor": "#1E1E1E",
-            "color": "white",
-            "fontWeight": "bold",
-            "borderBottom": "2px solid #444"
-        },
-        style_data_conditional=[
-            {
-                "if": {"row_index": "odd"},
-                "backgroundColor": "#1A1A1A"
-            },
-            {
-                "if": {"column_id": "✔"},
-                "fontSize": "1.3rem"
-            }
-        ],
-        sort_action="native",
-        page_size=10
-    )
+    # 🧾 Construction tableau HTML
+    entetes_pronos = df_affiche.columns.tolist()
+    lignes_pronos = []
+
+    for _, row in df_affiche.iterrows():
+        cellules = [html.Td(row[col]) for col in entetes_pronos]
+        lignes_pronos.append(html.Tr(cellules))
+
+    tableau_pronos = html.Table([
+        html.Thead(html.Tr([html.Th(col) for col in entetes_pronos])),
+        html.Tbody(lignes_pronos)
+    ], className="tableau-ranking")
 
 
-    # 📊 Tableau complet des pronostiqueurs – version stylisée
-    tableau_complet = dash_table.DataTable(
-        columns=[
-            {"name": "Pseudo", "id": "utilisateur"},
-            {"name": "Total Pronos", "id": "total_pronostics"},
-            {"name": "Bons", "id": "bons_pronostics"},
-            {"name": "% Réussite", "id": "taux_reussite (%)"},
-            {"name": "Couverture", "id": "couverture_matchs (%)"},
-            {"name": "Équipe favorite", "id": "équipe_favorite"}
-        ],
-        data=df_stats.to_dict("records"),
-        style_table={"overflowX": "auto", "border": "none", "marginTop": "20px"},
-        style_cell={
-            "textAlign": "center",
-            "padding": "12px",
-            "fontFamily": "Exo 2, sans-serif",
-            "backgroundColor": "#121212",
-            "color": "white",
-            "border": "none"
-        },
-        style_header={
-            "backgroundColor": "#1E1E1E",
-            "color": "#ffffff",
-            "fontWeight": "bold",
-            "borderBottom": "2px solid #444"
-        },
-        style_data_conditional=[
-            {
-                "if": {"row_index": "odd"},
-                "backgroundColor": "#1A1A1A"
-            },
-            {
-                "if": {"column_id": "équipe_favorite"},
-                "color": "#FFDE59",  # Accent couleur pour la colonne finale
-                "fontWeight": "bold"
-            }
-        ],
-        css=[{
-            "selector": ".dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner",
-            "rule": "border: none !important;"
-        }],
-        sort_action="native",
-        page_size=10
-    )
+
+    # 📥 Chargement stats utilisateurs
+    df_stats = pd.read_csv("data/processed/vue_ensemble_stats_prono_par_utilisateur.csv")
+    df_stats = df_stats[df_stats["utilisateur"] != "admin33"]
+
+    # 🔢 Tri par % réussite DESC puis total_pronostics DESC
+    df_stats = df_stats.sort_values(by=["taux_reussite (%)", "total_pronostics"], ascending=[False, False])
+
+
+    # 🔢 Ajout du rang (1 à N)
+    df_stats = df_stats.reset_index(drop=True)
+    df_stats["#"] = df_stats.index + 1
+
+    # 🧱 Construction tableau HTML – Classement global
+    colonnes_stats = [
+        "#", "utilisateur", "total_pronostics", "bons_pronostics",
+        "taux_reussite (%)", "couverture_matchs (%)", "équipe_favorite"
+    ]
+    entetes_stats = ["#", "Swisher", "Nb Pronos", "Pronos ✅", "% Réussite", "% Implication", "Équipe favorite"]
+
+    lignes_utilisateurs = []
+
+    for _, row in df_stats.iterrows():
+        cellules = [html.Td(row[col]) for col in colonnes_stats]
+        lignes_utilisateurs.append(html.Tr(cellules))
+
+        tableau_complet = html.Div([
+            html.Img(
+                src="/assets/logos/swish_league_logo.png",  # adapte le chemin
+                style={
+                    "height": "130px",
+                    "marginBottom": "20px",
+                    "display": "block",
+                    "marginLeft": "auto",
+                    "marginRight": "auto"
+                },
+                alt="Badge Swish League"
+            ),
+
+            html.H4(
+                "Classement Swish League",
+                className="titre-bloc-droit",
+                style={
+                    "fontSize": "1.2rem",
+                    "marginBottom": "12px",
+                    "fontWeight": "bold",
+                    "textAlign": "left"
+                }
+            ),
+
+
+            html.Table([
+                html.Thead(html.Tr([html.Th(col) for col in entetes_stats])),
+                html.Tbody(lignes_utilisateurs)
+            ], className="tableau-ranking")
+        ])
+
 
 
     # Graphique Volume vs Précision
@@ -182,31 +162,43 @@ def swishrank_layout(pseudo="Polo"):
         }
     )
 
-    # Layout final harmonisé
+    # Layout final harmonisé – version épurée
     return html.Div(
         style={"backgroundColor": "#121212", "minHeight": "100vh"},
         children=[
             html.Div([
-                html.H2("SwishRank – Classement des pronostiqueurs", className="titre-bloc section-bienvenue"),
+                html.H2("Swish League", className="titre-bloc section-bienvenue"),
                 html.P("Compare tes performances avec les autres swishers !", className="texte-description"),
 
                 dbc.Row([
-                    dbc.Col(bloc_avatar, lg=5, sm=12),
-                    dbc.Col(bloc_ranking, lg=7, sm=12)
-                ], className="gy-4 align-items-center"),
+                    dbc.Col(bloc_avatar, lg=4, sm=12),
+                    dbc.Col([], lg=1),
+                    dbc.Col(tableau_complet, lg=7, sm=12)
+                ], className="gy-4 align-items-stretch"),
+
 
                 html.Hr(className="ligne-separatrice"),
 
-                html.H2("Historique de tes pronostics", className="titre-bloc"),
-                html.Div(tableau_pronos),
+                html.H2("Mes pronostics", className="titre-bloc"),
+
+                dbc.Row([
+                    dbc.Col(tableau_pronos, lg=7, sm=12),
+                    dbc.Col(
+                        html.Div(
+                            html.Img(
+                                src="/assets/images/pronostic_horizontal.jpg",
+                                className="img-fondu-vertical",
+                                alt="Illustration pronostics"
+                            ),
+                            style={"height": "100%", "display": "flex", "alignItems": "center", "justifyContent": "center"}
+                        ),
+                        lg=5,
+                        sm=12
+                    )
+                ], className="gy-3 align-items-stretch"),
                 html.Hr(className="ligne-separatrice"),
 
-
-                html.H2("Classement complet", className="titre-bloc"),
-                html.Div(tableau_complet, style={"marginTop": "20px"}),
-
-                html.Hr(className="ligne-separatrice"),
-
+                # 📈 Graphique analyse
                 html.H2("Analyse des profils", className="titre-bloc"),
                 html.Div(scatter_plot, style={"marginTop": "20px"})
             ], className="container-site")

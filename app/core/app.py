@@ -123,7 +123,8 @@ def afficher_page(pathname, session):
     elif pathname == "/statsnba":
         return statsnba_layout()
     elif pathname == "/swishrank":
-        return swishrank_layout()
+        pseudo = session.get("pseudo", "")
+        return swishrank_layout(pseudo)
     else:
         return html.Div("Page introuvable", style={"padding": "2rem", "color": "red"})
 

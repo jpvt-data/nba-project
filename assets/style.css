@@ -500,11 +500,19 @@ p,
     text-align: center;
 }
 
+/* 📱 Scroll horizontal pour les tableaux */
 .tableau-ranking {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.tableau-ranking table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
 }
+
 
 .tableau-ranking th,
 .tableau-ranking td {
@@ -550,4 +558,11 @@ p,
     }
 }
 
-
+/* Fondu image */
+.img-fondu-vertical {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: inset 0 0 40px 12px rgba(0, 0, 0, 0.3);
+}
