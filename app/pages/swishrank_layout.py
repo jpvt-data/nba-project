@@ -48,7 +48,73 @@ def swishrank_layout(pseudo="Polo"):
         ], className="tableau-ranking"),
     ], className="bloc-ranking-wrapper")
 
-    # Tableau complet
+    # ======================================
+    # 📋 Tableau des pronostics effectués
+    # ======================================
+
+    # Chargement des pronostics
+    df_pronos = pd.read_csv("data/processed/pronostics_eval.csv")
+    df_pronos = df_pronos[df_pronos["utilisateur"] == pseudo]
+
+    # Conversion UTC → Heure de Paris
+    df_pronos["date_pronostic"] = pd.to_datetime(df_pronos["date_pronostic"], utc=True).dt.tz_convert("Europe/Paris")
+    df_pronos["date_pronostic"] = df_pronos["date_pronostic"].dt.strftime("%d/%m/%Y %H:%M")
+
+    # Conversion emoji pour la colonne 'pronostic_correct'
+    df_pronos["résultat"] = df_pronos["pronostic_correct"].apply(lambda x: "✅" if x else "❌")
+
+    # Sélection et renommage des colonnes utiles
+    df_affiche = df_pronos[[
+        "date_pronostic", "date_match", "équipe_domicile", "score_domicile",
+        "équipe_extérieure", "score_extérieur", "équipe_pronostiquée",
+        "résultat", "type_match"
+    ]].rename(columns={
+        "date_pronostic": "Date Prono (Paris)",
+        "date_match": "Date Match",
+        "équipe_domicile": "Domicile",
+        "score_domicile": "Score D",
+        "équipe_extérieure": "Extérieur",
+        "score_extérieur": "Score E",
+        "équipe_pronostiquée": "Choix",
+        "résultat": "✔",
+        "type_match": "Type"
+    })
+
+    # Tableau stylisé
+    tableau_pronos = dash_table.DataTable(
+        columns=[{"name": col, "id": col} for col in df_affiche.columns],
+        data=df_affiche.to_dict("records"),
+        style_table={"overflowX": "auto", "marginTop": "20px"},
+        style_cell={
+            "textAlign": "center",
+            "padding": "10px",
+            "fontFamily": "Exo 2, sans-serif",
+            "backgroundColor": "#121212",
+            "color": "white",
+            "border": "none"
+        },
+        style_header={
+            "backgroundColor": "#1E1E1E",
+            "color": "white",
+            "fontWeight": "bold",
+            "borderBottom": "2px solid #444"
+        },
+        style_data_conditional=[
+            {
+                "if": {"row_index": "odd"},
+                "backgroundColor": "#1A1A1A"
+            },
+            {
+                "if": {"column_id": "✔"},
+                "fontSize": "1.3rem"
+            }
+        ],
+        sort_action="native",
+        page_size=10
+    )
+
+
+    # 📊 Tableau complet des pronostiqueurs – version stylisée
     tableau_complet = dash_table.DataTable(
         columns=[
             {"name": "Pseudo", "id": "utilisateur"},
@@ -59,13 +125,40 @@ def swishrank_layout(pseudo="Polo"):
             {"name": "Équipe favorite", "id": "équipe_favorite"}
         ],
         data=df_stats.to_dict("records"),
-        style_table={"overflowX": "auto"},
-        style_cell={"textAlign": "center"},
-        style_header={"fontWeight": "bold", "backgroundColor": "#1E1E1E", "color": "white"},
-        style_data={"backgroundColor": "#121212", "color": "white"},
+        style_table={"overflowX": "auto", "border": "none", "marginTop": "20px"},
+        style_cell={
+            "textAlign": "center",
+            "padding": "12px",
+            "fontFamily": "Exo 2, sans-serif",
+            "backgroundColor": "#121212",
+            "color": "white",
+            "border": "none"
+        },
+        style_header={
+            "backgroundColor": "#1E1E1E",
+            "color": "#ffffff",
+            "fontWeight": "bold",
+            "borderBottom": "2px solid #444"
+        },
+        style_data_conditional=[
+            {
+                "if": {"row_index": "odd"},
+                "backgroundColor": "#1A1A1A"
+            },
+            {
+                "if": {"column_id": "équipe_favorite"},
+                "color": "#FFDE59",  # Accent couleur pour la colonne finale
+                "fontWeight": "bold"
+            }
+        ],
+        css=[{
+            "selector": ".dash-table-container .dash-spreadsheet-container .dash-spreadsheet-inner",
+            "rule": "border: none !important;"
+        }],
         sort_action="native",
         page_size=10
     )
+
 
     # Graphique Volume vs Précision
     scatter_plot = dcc.Graph(
@@ -89,28 +182,33 @@ def swishrank_layout(pseudo="Polo"):
         }
     )
 
-    # Layout global
-    return html.Div([
-        html.H1("SwishRank – Classement des pronostiqueurs", className="titre-texte"),
-        html.P("Compare tes performances avec les autres swishers !", className="texte-secondaire"),
+    # Layout final harmonisé
+    return html.Div(
+        style={"backgroundColor": "#121212", "minHeight": "100vh"},
+        children=[
+            html.Div([
+                html.H2("SwishRank – Classement des pronostiqueurs", className="titre-bloc section-bienvenue"),
+                html.P("Compare tes performances avec les autres swishers !", className="texte-description"),
 
-        dbc.Row([
-            dbc.Col(bloc_avatar, lg=5, sm=12),
-            dbc.Col(bloc_ranking, lg=7, sm=12)
-        ], className="gy-4"),
+                dbc.Row([
+                    dbc.Col(bloc_avatar, lg=5, sm=12),
+                    dbc.Col(bloc_ranking, lg=7, sm=12)
+                ], className="gy-4 align-items-center"),
 
-        html.Hr(className="ligne-separatrice"),
+                html.Hr(className="ligne-separatrice"),
 
-        html.Div([
-            html.H3("Classement complet", className="titre-section"),
-            tableau_complet
-        ], style={"marginTop": "40px"}),
+                html.H2("Historique de tes pronostics", className="titre-bloc"),
+                html.Div(tableau_pronos),
+                html.Hr(className="ligne-separatrice"),
 
-        html.Hr(className="ligne-separatrice"),
 
-        html.Div([
-            html.H3("Analyse des profils", className="titre-section"),
-            scatter_plot
-        ], style={"marginTop": "40px"}),
+                html.H2("Classement complet", className="titre-bloc"),
+                html.Div(tableau_complet, style={"marginTop": "20px"}),
 
-    ], style={"backgroundColor": "#121212", "minHeight": "100vh", "padding": "30px"})
+                html.Hr(className="ligne-separatrice"),
+
+                html.H2("Analyse des profils", className="titre-bloc"),
+                html.Div(scatter_plot, style={"marginTop": "20px"})
+            ], className="container-site")
+        ]
+    )

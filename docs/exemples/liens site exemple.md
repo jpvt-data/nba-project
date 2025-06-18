@@ -1,0 +1,1 @@
+https://www.google.com/search?client=firefox-b-d&q=classement+NBA+1971#sie=lg;/m/09hqyn;3;/m/05jvx;st;fp;1;;;
