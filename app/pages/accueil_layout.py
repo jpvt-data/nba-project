@@ -7,7 +7,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 
 
-def accueil_layout(pseudo=""):
+def accueil_layout(pseudo, bio_phrase):
     # Chargement une seule fois au début du fichier ou via cache
     df_stats = pd.read_csv("data/processed/vue_ensemble_stats_prono_par_utilisateur.csv")
     df_stats = df_stats[df_stats["utilisateur"] != "admin33"]
@@ -43,6 +43,12 @@ def accueil_layout(pseudo=""):
                     html.Span("Équipe favorite", className="bloc-label"),
                     html.Span(f"{equipe}", className="bloc-valeur equipe-valeur")
                 ], className="bloc-stat"),
+
+                # 💬 Phrase personnalisée
+                html.Div([
+                    html.Hr(style={"borderColor": "#777", "margin": "36px auto 30px auto", "width": "80%"}),
+                    html.Em(bio_phrase)
+                ], style={"fontSize": "0.9rem", "color": "#ccc", "textAlign": "center"})
             ], className="bloc-avatar-stats")
         ], className="bloc-avatar-ligne")
     ], className="bloc-avatar-wrapper")
@@ -53,10 +59,21 @@ def accueil_layout(pseudo=""):
     top3 = top_actifs.sort_values(by="taux_reussite (%)", ascending=False).head(3).reset_index(drop=True)
     
     bloc_ranking = html.Div([
-        html.H4("Top 3 Swish Rank", className="titre-bloc-droit"),
+        html.H4("Top 3 Swish League", className="titre-bloc-droit"),
+        html.Img(
+            src="/assets/logos/swish_league_logo.png",  # adapte le chemin
+            style={
+                "height": "160px",
+                "marginBottom": "20px",
+                "display": "block",
+                "marginLeft": "auto",
+                "marginRight": "auto"
+            },
+            alt="Badge Swish League"
+        ),
         html.Table([
             html.Thead(html.Tr([
-                html.Th("Swisher"), html.Th("Nb Pronostics"), html.Th("% Réussite") 
+                html.Th("Swisher"), html.Th("Nb Pronos"), html.Th("% Réussite") 
             ])),
             html.Tbody([
                 html.Tr([
@@ -75,37 +92,48 @@ def accueil_layout(pseudo=""):
                     html.Td(f"{top3.loc[2, 'taux_reussite (%)']:.1f}%")
                 ]),
             ])
-        ], className="tableau-ranking"),
+        ], className="tableau-ranking", style={"textAlign": "center"}),
         html.Br(),
         html.Div(
-            dcc.Link("Détails Swish Rank", href="/swishrank", className="bouton-sw"),
+            dcc.Link("Détails Swish League", href="/swishrank", className="bouton-sw"),
             style={"textAlign": "center"}
         )
     ], className="bloc-ranking-wrapper")
 
-    # 🏀 Image centrale entre les deux blocs (affichée uniquement en mode desktop)
+    # image_centrale
     image_centrale = html.Div(
         html.Img(
-            src="/assets/images/basketteur.png",
-            style={"height": "300px"},
-            alt="Basketteur central",
+            src="/assets/images/affiche_accueil.png",
+            alt="Affiche accueil",
+            style={
+                "width": "100%",
+                "height": "auto",
+                "objectFit": "cover",
+                "borderRadius": "12px"
+            },
             className="d-none d-lg-block"
         ),
-        style={"textAlign": "center", "margin": "auto"}
+        style={
+            "height": "100%",         # 👈 oblige le conteneur à suivre les autres blocs
+            "display": "flex", 
+            "alignItems": "stretch"
+        }
     )
-
 
     return html.Div(
         style={"backgroundColor": "#121212", "minHeight": "100vh"},
         children=[
             html.Div([
-                html.H2("Ton Swish Score", className="titre-bloc section-bienvenue"),
+                html.H2("Swish Score", className="titre-bloc section-bienvenue"),
 
-                dbc.Row([
-                    dbc.Col(bloc_avatar, lg=5, sm=12),
-                    dbc.Col(image_centrale, lg=2, sm=0),  # image uniquement visible en desktop
-                    dbc.Col(bloc_ranking, lg=5, sm=12)
-                ], className="gy-4 align-items-center"),
+                dbc.Row(
+                    [
+                        dbc.Col(bloc_avatar, sm=12, lg=4, className="mb-4"),
+                        dbc.Col(image_centrale, sm=12, lg=4, className="mb-4 d-none d-lg-block"),
+                        dbc.Col(bloc_ranking, sm=12, lg=4, className="mb-4")
+                    ],
+                    className="gx-4 gy-0 align-items-stretch"
+                ),
 
                 html.Hr(className="ligne-separatrice"),
 

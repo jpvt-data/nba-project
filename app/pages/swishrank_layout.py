@@ -111,7 +111,7 @@ def swishrank_layout(pseudo):
             html.Img(
                 src="/assets/logos/swish_league_logo.png",  # adapte le chemin
                 style={
-                    "height": "130px",
+                    "height": "150px",
                     "marginBottom": "20px",
                     "display": "block",
                     "marginLeft": "auto",

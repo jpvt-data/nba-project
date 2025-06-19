@@ -9,7 +9,7 @@ connexion_layout = html.Div(
         # 🏀 Logo NBA centré
         html.Div([
             html.Img(
-                src="/assets/logos/nba_logo.png",
+                src="/assets/logos/swish_league_logo.png",
                 style={
                     "height": "100px",
                     "margin": "20px auto 10px auto",

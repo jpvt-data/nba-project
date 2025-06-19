@@ -117,7 +117,7 @@ def afficher_page(pathname, session):
     # ✅ Routage si connecté
     if pathname == "/":
         pseudo = session.get("pseudo", "")
-        return accueil_layout(pseudo)
+        return accueil_layout(pseudo, get_bio_phrase(pseudo))
     elif pathname == "/profil":
         return profil_layout()
     elif pathname == "/statsnba":
@@ -359,6 +359,18 @@ def afficher_avatar_utilisateur(session, pathname):
         ]
     )
 
+# ===============================
+# Bio-Phrases
+# ===============================
+
+
+# Chargement et parsing du dictionnaire depuis l'environnement
+bio_phrases = json.loads(os.getenv("BIO_PHRASES", "{}"))
+
+
+# 🔍 Récupérer la phrase associée à un pseudo
+def get_bio_phrase(pseudo):
+    return bio_phrases.get(pseudo, "")
 
 # ===============================
 # ▶️ Lancement local

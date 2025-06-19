@@ -133,6 +133,28 @@ p,
     margin-left: 20px;
 }
 
+/* ✅ Compacte globalement la hauteur de la navbar */
+.navbar,
+.navbar-custom,
+.dash-bootstrap .navbar {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    min-height: 48px !important;
+}
+
+/* ✅ Réduction logo */
+.navbar-logo {
+    height: 60px;
+    width: auto;
+    margin-right: 12px;
+}
+
+/* ✅ Réduction titre */
+.nav-titre {
+    font-size: 1.5rem;
+    line-height: 1.2;
+}
+
 /* === Blocs page Accueil === */
 .section-bloc {
     margin-bottom: 60px;
@@ -327,10 +349,11 @@ p,
     border-top: 2px solid #ffffff;
     width: 100%;
     max-width: 100%;
+    margin-top: 20px;
     opacity: 0;
     transform: translateY(-10px);
     animation: apparition-ligne 0.8s ease forwards;
-    margin: 20px auto 30px auto;
+    margin: 50px auto 30px auto;
 }
 
 @keyframes apparition-ligne {
@@ -413,12 +436,16 @@ p,
     padding: 20px;
     margin-bottom: 40px;
 
-    /* 🔧 Taille et centrage — version desktop */
     width: 100%;
     max-width: 400px;
     margin-left: auto;
     margin-right: auto;
-    height: 90%;
+
+    /* ✅ Harmonisation hauteur */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .bloc-avatar-ligne {
@@ -433,11 +460,11 @@ p,
 }
 
 .bloc-avatar-img {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     border-radius: 12px;
     object-fit: cover;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
 }
 
 .bloc-avatar-nom {
@@ -485,12 +512,16 @@ p,
     padding: 20px;
     margin-bottom: 40px;
 
-    /* 🧱 Taille uniforme avec bloc-avatar */
     width: 100%;
     max-width: 400px;
     margin-left: auto;
     margin-right: auto;
-    height: 90%;
+
+    /* ✅ Harmonisation hauteur */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .titre-bloc-droit {
@@ -502,7 +533,7 @@ p,
 
 /* 📱 Scroll horizontal pour les tableaux */
 .tableau-ranking {
-    display: block;
+    display: inline-block;
     overflow-x: auto;
     white-space: nowrap;
     width: 100%;
@@ -526,6 +557,8 @@ p,
     color: #bbb;
     font-weight: bold;
 }
+
+
 
 
 /* 🔘 BOUTON LIEN RANK */
@@ -565,4 +598,17 @@ p,
     border-radius: 12px;
     object-fit: cover;
     box-shadow: inset 0 0 40px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive: chaque bloc remplit toute la largeur sur mobile */
+.bloc-col {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Gère les marges entre lignes (vertical) et colonnes (horizontal) */
+.ligne-bloc {
+    align-items: stretch;
+    margin-bottom: 40px;
 }

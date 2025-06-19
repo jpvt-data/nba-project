@@ -26,7 +26,7 @@ def navbar():
                     href="/",
                     className="d-flex align-items-center navbar-brand-wrapper",
                     children=[
-                        html.Img(src="/assets/logos/nba_logo.png", className="navbar-logo"),
+                        html.Img(src="/assets/logos/swish_league_logo.png", className="navbar-logo"),
                         html.Span("Swish League", className="nav-titre")
                     ]
                 )
