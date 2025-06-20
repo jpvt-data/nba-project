@@ -38,7 +38,7 @@ from app.pages.connexion_layout import connexion_layout
 # 🧩 Composants – menus & callbacks
 # ======================================
 
-from app.composants.menu import navbar, register_navbar_callbacks
+from app.composants.menu import navbar
 
 # ======================================
 # 📊 Données & logique – fonctions de base
@@ -62,7 +62,6 @@ app = Dash(
 )
 
 server = app.server
-register_navbar_callbacks(app)  # 🔁 À activer si navbar dynamique
 
 
 ## ===============================
@@ -297,6 +296,7 @@ def afficher_tableau_classement(type_saison, annee, conference):
         html.Thead(html.Tr([html.Th(col) for col in entetes])),
         html.Tbody(lignes)
     ], className="tableau-ranking")
+
 
 # ======================================
 # 🔐 Connexion utilisateur

@@ -41,20 +41,3 @@ def navbar():
         className="navbar-custom"
     )
 
-# ======================================
-# 🔁 Callback pour le menu hamburger (mobile)
-# ======================================
-
-from dash.dependencies import Input, Output, State
-
-def register_navbar_callbacks(app):
-    @app.callback(
-        Output("navbar-collapse", "is_open"),
-        Input("navbar-toggler", "n_clicks"),
-        State("navbar-collapse", "is_open")
-    )
-    def toggle_navbar(n, is_open):
-        if n:
-            return not is_open
-        return is_open
-

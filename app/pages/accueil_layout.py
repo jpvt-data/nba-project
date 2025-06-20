@@ -137,19 +137,64 @@ def accueil_layout(pseudo, bio_phrase):
 
                 html.Hr(className="ligne-separatrice"),
 
-                # 📆 Bloc 1 – Matchs à pronostiquer
-                html.H2("Pronostics en cours", className="titre-bloc"),
-                html.Div([
-                    html.P("Voici les matchs des 7 prochains jours à ne surtout pas rater."),
-                    html.P([
-                        "👉 ",
-                        html.Strong("Clique sur le bouton sous l'équipe que tu vois gagnante.")
-                    ]),
-                    html.P([
-                        "⏳ Tu peux pronostiquer ou modifier ton vote jusqu’à l’heure de début du match.",
-                        " Ensuite, c’est verrouillé automatiquement !"
-                    ])
-                ], className="texte-description"),
+
+                # Bloc Pronostics en cours – Texte à gauche / Bouton à droite
+                # html.H2("Pronostics en cours", className="titre-bloc"),
+
+                dbc.Row(
+                    [
+                        # 📋 Texte d’instructions (2/3 gauche)
+                        dbc.Col([
+                            html.H2("Pronostics en cours", className="titre-bloc"),
+                            html.P("Voici les prochains matchs à ne pas manquer."),
+                            html.P([
+                                "👉 ",
+                                html.Strong("Clique sur l’équipe que tu vois gagnante pour pronostiquer.")
+                            ]),
+                            html.P([
+                                "📊 ",
+                                "Besoin d'infos pour affiner ton choix ? ",
+                                html.Span("Consulte les stats NBA à droite."),
+                            ]),
+                            html.P([
+                                "⏳ ",
+                                "Tu peux modifier ton vote jusqu’au début du match. Ensuite, c’est verrouillé!"
+                            ])
+                        ], lg=8, sm=12, className="texte-description"),
+
+
+                        # 🎯 Colonne droite : logo centré + bouton, tous deux alignés verticalement
+                        dbc.Col(
+                            html.Div([
+                                html.Img(
+                                    src="/assets/logos/swish_stats_logo.png",  # 🖼️ adapte le chemin si besoin
+                                    style={
+                                        "height": "120px",
+                                        "marginBottom": "5px"
+                                    },
+                                    alt="Logo stats NBA"
+                                ),
+                                dcc.Link("Accès aux Stats NBA", href="/statsnba", className="bouton-sw")
+                            ],
+                            style={
+                                "display": "flex",
+                                "flexDirection": "column",
+                                "alignItems": "center",
+                                "justifyContent": "center"
+                            }),
+                            lg=4,
+                            sm=12,
+                            className="d-flex align-items-center justify-content-center"
+                        )
+                    ],
+                    className="gy-0 align-items-stretch",
+                    style={"marginLeft": "0", "marginRight": "0", "width": "100%"}
+                    ),
+
+                # 🎮 Bloc des cartes de pronostics (pleine largeur)
+                html.Div(id="bloc_matchs"),
+
+                # 🔽 Bloc des cartes de pronostics (pleine largeur)
                 html.Div(id="bloc_matchs"),
 
                 html.Hr(className="ligne-separatrice"),
