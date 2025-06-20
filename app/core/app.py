@@ -354,7 +354,7 @@ def afficher_avatar_utilisateur(session, pathname):
         href="/profil",
         className="nav-link-custom d-flex flex-column align-items-center",
         children=[
-            html.Img(src=f"/assets/avatars/{pseudo}.png", className="avatar-navbar"),
+            html.Img(src=f"/assets/avatars/{pseudo}_S.png", className="avatar-navbar"),
             html.Div(pseudo, className="pseudo-navbar")
         ]
     )
