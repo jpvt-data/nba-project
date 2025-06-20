@@ -1,5 +1,5 @@
 utilisateur,total_pronostics,bons_pronostics,taux_reussite (%),matchs_distincts,couverture_matchs (%),équipe_favorite
-Milk_it,1,1,100.0,1,0.1,OKC
-Polo,2,2,100.0,2,0.2,OKC
-Tout_Sec,2,2,100.0,2,0.2,OKC
-admin33,2,2,100.0,2,0.2,OKC
+Milk_it,2,1,50.0,2,0.2,OKC
+Polo,3,2,66.7,3,0.2,OKC
+Tout_Sec,3,3,100.0,3,0.2,OKC
+admin33,3,2,66.7,3,0.2,OKC
