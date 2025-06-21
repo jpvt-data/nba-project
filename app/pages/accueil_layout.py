@@ -199,13 +199,7 @@ def accueil_layout(pseudo, bio_phrase):
 
                 html.Hr(className="ligne-separatrice"),
 
-                html.H2("Classement NBA", className="titre-bloc"),
-                html.Div(id="bloc_classement"),
-                html.Div(
-                    dcc.Link("Accès aux Stats NBA", href="/statsnba", className="bouton-sw"),
-                    style={"textAlign": "center"}
-                ),
-
+                afficher_calendrier(),
 
                 html.Hr(className="ligne-separatrice"),
                 html.H2("Dernières infos NBA", className="titre-bloc"),
@@ -213,3 +207,71 @@ def accueil_layout(pseudo, bio_phrase):
             ], className="container-site")
         ]
     )
+
+# ======================================
+# 📅 Bloc Calendrier NBA – Saison régulière
+# ======================================
+
+import calendar
+from datetime import datetime
+import locale
+
+try:
+    locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
+except locale.Error:
+    pass
+
+def afficher_calendrier():
+    df = pd.read_csv("data/processed/calendrier/calendrier_saison.csv")
+    df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%y")
+    df["mois"] = df["Date"].dt.month
+    df["annee"] = df["Date"].dt.year
+
+    # Limite la dropdown aux mois effectivement présents
+    mois_uniques = df[["annee", "mois"]].drop_duplicates().sort_values(["annee", "mois"]).values.tolist()
+    options = []
+    for annee, mois in mois_uniques:
+        mois_label = datetime(annee, mois, 1).strftime("%B %Y").capitalize()
+        mois_label = (mois_label
+            .replace("Fevrier", "Février")
+            .replace("Aout", "Août")
+            .replace("Decembre", "Décembre")
+            .replace("Mai", "Mai")
+            .replace("Juin", "Juin")
+            .replace("Juillet", "Juillet")
+        )
+        options.append({"label": mois_label, "value": f"{annee}-{mois:02d}"})
+
+    now = datetime.now()
+    valeur_defaut = options[0]["value"]
+    for opt in options:
+        if now.year == int(opt["value"].split("-")[0]) and now.month == int(opt["value"].split("-")[1]):
+            valeur_defaut = opt["value"]
+
+    return html.Div([
+        html.H2("Calendrier de la Saison", className="titre-bloc"),
+        html.Div([
+            dcc.Dropdown(
+                id="select_mois_calendrier",
+                options=options,
+                value=valeur_defaut,
+                clearable=False,
+                className="dropdown-mois-nba",
+                style={
+                    "width": "260px",
+                    "margin": "0 auto",
+                    "color": "#222",
+                    "backgroundColor": "#eee",
+                    "display": "inline-block",
+                }
+            ),
+            # Ajout des boutons semaine
+            html.Button("◀", id="prev_week_btn", n_clicks=0, className="cal-btn", style={"marginLeft": "20px"}),
+            dcc.Store(id="cal_week_idx", data=0),
+            html.Button("▶", id="next_week_btn", n_clicks=0, className="cal-btn", style={"marginLeft": "6px"}),
+        ], style={"textAlign": "center", "marginBottom": "20px"}),
+        html.Div(id="conteneur_calendrier", style={"marginTop": "10px"})
+    ], style={"textAlign": "center", "width": "100%"})
+
+
+

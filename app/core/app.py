@@ -292,10 +292,135 @@ def afficher_tableau_classement(type_saison, annee, conference):
 
     entetes = ["#", "Équipe", "V", "D", "%", "Domicile", "Extérieur", "Conf", "Écart"]
 
-    return html.Table([
-        html.Thead(html.Tr([html.Th(col) for col in entetes])),
-        html.Tbody(lignes)
-    ], className="tableau-ranking")
+    return html.Div(
+        html.Table([
+            html.Thead(html.Tr([html.Th(col) for col in entetes])),
+            html.Tbody(lignes)
+        ], className="tableau-ranking"),
+        className="tableau-ranking-wrapper"
+    )
+
+# ===============================
+# 📅 Callback Calendrier NBA
+# ===============================
+
+@app.callback(
+    Output("conteneur_calendrier", "children"),
+    Output("cal_week_idx", "data"),
+    Input("select_mois_calendrier", "value"),
+    Input("prev_week_btn", "n_clicks"),
+    Input("next_week_btn", "n_clicks"),
+    State("cal_week_idx", "data")
+)
+def afficher_calendrier_semaine(valeur_mois, prev_clicks, next_clicks, week_idx):
+    import pandas as pd
+    from datetime import datetime
+    import calendar
+
+    df = pd.read_csv("data/processed/calendrier/calendrier_saison.csv")
+    df["Date"] = pd.to_datetime(df["Date"], format="%d/%m/%y")
+    df["mois"] = df["Date"].dt.month
+    df["annee"] = df["Date"].dt.year
+    df["jour"] = df["Date"].dt.day
+
+    annee, mois = map(int, valeur_mois.split("-"))
+    df_mois = df[(df["mois"] == mois) & (df["annee"] == annee)]
+
+    cal = calendar.Calendar(firstweekday=0)
+    semaines = list(cal.monthdayscalendar(annee, mois))
+
+    # Gestion index semaine (callback dash pattern)
+    ctx = dash.callback_context
+    triggered = [t["prop_id"] for t in ctx.triggered]
+    if not triggered or "select_mois_calendrier" in triggered[0]:
+        week_idx = 0  # reset à chaque changement de mois
+    elif "prev_week_btn" in triggered[0]:
+        week_idx = max(0, week_idx - 1)
+    elif "next_week_btn" in triggered[0]:
+        week_idx = min(len(semaines) - 1, week_idx + 1)
+    # Clamp l’index
+    week_idx = max(0, min(week_idx, len(semaines) - 1))
+
+    semaine = semaines[week_idx]
+    jours_semaine = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+
+    ligne = []
+    for i, jour in enumerate(semaine):
+        if jour == 0:
+            ligne.append(html.Td("", className="cellule-jour-vide"))
+        else:
+            matchs_du_jour = df_mois[df_mois["jour"] == jour]
+            if matchs_du_jour.empty:
+                ligne.append(html.Td(str(jour), className="cellule-jour-vide"))
+            else:
+                blocs_matchs = []
+                for _, match in matchs_du_jour.iterrows():
+                    score = (
+                        f"{int(match['score_domicile'])} - {int(match['score_exterieur'])}"
+                        if pd.notna(match["score_domicile"]) and pd.notna(match["score_exterieur"])
+                        else ""
+                    )
+                    # LOGOS ET NOMS "AWAY @ HOME"
+                    logo_away = html.Img(
+                        src=f"https://cdn.nba.com/logos/nba/{match['id_team_extérieure']}/global/L/logo.svg",
+                        style={"height": "44px", "marginRight": "10px", "display": "block", "marginLeft": "auto", "marginRight": "auto"}
+                    )
+                    logo_home = html.Img(
+                        src=f"https://cdn.nba.com/logos/nba/{match['id_team_domicile']}/global/L/logo.svg",
+                        style={"height": "44px", "marginLeft": "10px", "display": "block", "marginLeft": "auto", "marginRight": "auto"}
+                    )
+                    # Ligne logos centrés
+                    logos_row = html.Div([
+                        html.Div(logo_away, style={"display": "inline-block", "width": "48%"}),
+                        html.Div(logo_home, style={"display": "inline-block", "width": "48%"})
+                    ], style={"width": "100%", "marginBottom": "6px", "textAlign": "center"})
+                    # Noms des équipes ("AWAY @ HOME")
+                    noms_equipes = html.Div([
+                        html.Span(match['équipe_extérieure'], style={"fontWeight": "bold", "color": "#fff", "fontSize": "1em"}),
+                        html.Span(" @ ", style={"color": "#ccc", "fontWeight": "bold"}),
+                        html.Span(match['équipe_domicile'], style={"fontWeight": "bold", "color": "#fff", "fontSize": "1em"}),
+                    ], style={"marginBottom": "2px"})
+                    arene = f"{match['Salle']} – {match['Ville_salle']} ({match['Etat_salle']})"
+                    heure = match["Heure"]
+                    competition = ""
+                    if pd.notna(match["Compétition "]):
+                        comp_str = str(match["Compétition "]).strip()
+                        if comp_str and comp_str != "Saison régulière":
+                            competition = comp_str
+
+                    blocs_matchs.append(
+                        html.Div([
+                            logos_row,
+                            noms_equipes,
+                            html.Div(score, className="score-nba-cal" if score else "score-nba-cal-vide", style={"fontSize": "1.2em", "fontWeight": "bold", "margin": "2px 0 2px 0"}),
+                            html.Div(heure, style={"fontSize": "0.92em", "fontWeight": "normal"}),
+                            html.Div(arene, style={"fontSize": "0.78em", "color": "#888"}),
+                            html.Div(competition, style={"fontSize": "0.78em", "color": "#c96"}) if competition else None
+                        ], className="bloc-match-nba", style={"padding": "10px 2px"})
+                    )
+                ligne.append(html.Td([
+                    html.Div(str(jour), className="cellule-jour-num"),
+                    *blocs_matchs
+                ], className="cellule-jour-cal"))
+    calendrier = html.Table([
+        html.Thead(html.Tr([html.Th(j, style={"textAlign": "center"}) for j in jours_semaine])),
+        html.Tbody([html.Tr(ligne)])
+    ], className="tableau-calendrier-nba", style={
+        "width": "100%",
+        "margin": "0 auto",
+        "backgroundColor": "#181818"
+    })
+
+    # Indicateur semaine / X
+    indicateur = html.Div(
+        f"Semaine {week_idx + 1} sur {len(semaines)}",
+        style={"color": "#fff", "fontSize": "1em", "marginBottom": "5px"}
+    )
+
+    return html.Div([
+        indicateur,
+        html.Div(calendrier, className="conteneur-scroll-calendrier")
+    ]), week_idx
 
 
 # ======================================
