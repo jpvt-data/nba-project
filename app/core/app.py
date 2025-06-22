@@ -436,6 +436,90 @@ def afficher_calendrier_semaine(valeur_mois, prev_clicks, next_clicks, week_idx)
         html.Div(calendrier, className="conteneur-scroll-calendrier")
     ]), week_idx
 
+# ==========================================
+# 📊 Callback affichage dynamique Stats NBA
+# ==========================================
+from dash import html, dcc, Input, Output
+import dash_bootstrap_components as dbc
+import pandas as pd
+
+# 👇 Callback qui gère le switch entre Résultats / Joueurs / Hall of Fame
+@app.callback(
+    Output("bloc_statsnba_contenu", "children"),
+    Input("btn-resultats", "n_clicks"),
+    Input("btn-joueurs", "n_clicks"),
+    Input("btn-hof", "n_clicks"),
+)
+def afficher_bloc_statsnba(n_res, n_joueurs, n_hof):
+    # Détermine quel bouton a été cliqué le plus récemment
+    boutons = {
+        "btn-resultats": n_res or 0,
+        "btn-joueurs": n_joueurs or 0,
+        "btn-hof": n_hof or 0,
+    }
+    # On prend le bouton avec la valeur la plus élevée (= dernier cliqué)
+    bouton_actif = max(boutons, key=boutons.get)
+
+    # === Bloc Résultats (Classement NBA)
+    if bouton_actif == "btn-resultats":
+        # ---- Filtres interactifs
+        chemin_csv = "data/processed/saison/classement_conf_saisons_total.csv"
+        df_classement = pd.read_csv(chemin_csv)
+        options_saisons = sorted(df_classement["Année"].dropna().unique(), reverse=True)
+        options_conferences = df_classement["CONFERENCE"].dropna().unique()
+
+        return html.Div([
+            dbc.Row([
+                dbc.Col([
+                    html.Label("Type de saison", className="label-filtre"),
+                    dcc.Dropdown(
+                        id="filtre_type_saison",
+                        options=[
+                            {"label": "Saison régulière", "value": "regular"},
+                            {"label": "Playoffs", "value": "playoffs"},
+                            {"label": "Finals", "value": "finals"}
+                        ],
+                        value="regular",
+                        className="dropdown-sw"
+                    )
+                ], md=4),
+                dbc.Col([
+                    html.Label("Saison (Année)", className="label-filtre"),
+                    dcc.Dropdown(
+                        id="filtre_annee",
+                        options=[{"label": str(annee), "value": annee} for annee in options_saisons],
+                        value=options_saisons[0],
+                        className="dropdown-sw"
+                    )
+                ], md=4),
+                dbc.Col([
+                    html.Label("Conférence", className="label-filtre"),
+                    dcc.Dropdown(
+                        id="filtre_conference",
+                        options=[{"label": conf, "value": conf} for conf in options_conferences],
+                        value=options_conferences[0],
+                        className="dropdown-sw"
+                    )
+                ], md=4)
+            ], className="gy-3"),
+            html.Hr(className="ligne-separatrice"),
+            html.Div(id="tableau_classement"),
+        ])
+    # === Bloc Joueurs
+    elif bouton_actif == "btn-joueurs":
+        return html.Div([
+            html.H3("Stats joueurs (work in progress)", style={"color": "#fff"}),
+            html.P("À venir : stats individuelles, top joueurs, etc.", style={"color": "#aaa"}),
+        ])
+    # === Bloc Hall of Fame
+    elif bouton_actif == "btn-hof":
+        return html.Div([
+            html.H3("Hall of Fame (work in progress)", style={"color": "#fff"}),
+            html.P("À venir : records, légendes, distinctions majeures.", style={"color": "#aaa"}),
+        ])
+    else:
+        return html.Div()
+
 
 # ======================================
 # 🔐 Connexion utilisateur

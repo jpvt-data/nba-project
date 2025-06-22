@@ -766,3 +766,75 @@ p,
 .Select.is-focused > .Select-control {
     border-color: #5a5a5a !important;
 }
+
+#ligne-titre-boutons {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* ← Étire au maximum */
+    gap: 28px;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 950px;
+    margin: 38px auto 22px auto;
+    box-sizing: border-box;
+}
+
+#titre-statsnba {
+    margin: 0;
+    font-size: 2.2em;
+    font-family: 'Exo 2', 'Roboto', Arial, sans-serif;
+    font-weight: 800;
+    color: #fff;
+    white-space: nowrap;
+}
+
+#bloc_boutons_statsnba {
+    display: flex;
+    gap: 24px;
+    flex: 0 0 auto;
+}
+
+.bouton-statsnba {
+    min-width: 180px;      /* Tu peux augmenter/diminuer si tu veux des boutons plus larges/serrés */
+    max-width: 270px;
+    font-size: 1.18em;
+    font-family: 'Exo 2', 'Roboto', Arial, sans-serif;
+    padding: 14px 0;
+    border-radius: 12px;
+    font-weight: 700;
+    background: #e3483a;
+    border: none;
+    box-shadow: 0 2px 10px #1118;
+    color: #fff;
+    transition: transform .06s, box-shadow .12s;
+    margin: 0;
+}
+.bouton-statsnba:active {
+    transform: scale(0.97);
+    box-shadow: 0 1px 4px #1118;
+}
+
+/* MOBILE : empile tout (titre + boutons), marges harmonisées */
+@media (max-width: 900px) {
+    #ligne-titre-boutons {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        max-width: 98vw;
+        margin: 18px auto 8px auto;
+    }
+    #bloc_boutons_statsnba {
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+    }
+    .bouton-statsnba {
+        width: 100%;
+        min-width: 0;
+        max-width: 480px;
+        font-size: 1.08em;
+    }
+}
+
+
