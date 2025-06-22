@@ -7,10 +7,19 @@ import pandas as pd
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 import os
+import re
 import time
+import pathlib
+
+from nba_api.stats.endpoints import playoffpicture
+from nba_api.stats.endpoints.scheduleleaguev2 import ScheduleLeagueV2
+from nba_api.stats.static import players
+from nba_api.stats.static import teams
+from dateutil import parser
+from time import sleep
+import pytz
 
 # 📁 Chemin vers le fichier CSV principal
-import pathlib
 racine = pathlib.Path(__file__).resolve().parents[2]
 fichier_matchs_csv = os.path.join(racine, "data", "processed", "matchs.csv")
 print(f"📁 Chargement du fichier : {fichier_matchs_csv}")
@@ -118,10 +127,6 @@ print(f"\n📁 Fichier sauvegardé : {fichier_matchs_csv} ({len(df_matchs)} lign
 # Données sauvegardées dans data/raw/playoffs/
 # ===========================================================
 
-from nba_api.stats.endpoints import playoffpicture
-import pandas as pd
-import os
-
 # 🔢 Liste des SeasonID (exemples : 2024-25 → "2024" = 22024)
 saison_debut = 2025
 saison_fin = 2026
@@ -168,10 +173,6 @@ for season_id in season_ids:
 # 📦 Sauvegarde dans data/processed/saison/
 # ===========================================================
 
-import os
-import pandas as pd
-import re
-
 # 📁 Dossiers
 dossier_source = os.path.join(racine, "data", "raw", "saison")
 dossier_sortie = os.path.join(racine, "data", "processed", "saison")
@@ -211,8 +212,6 @@ for nom_fichier in os.listdir(dossier_source):
 # 📦 Résultat : data/processed/saison/classement_conf_saisons.csv
 # ===========================================================
 
-import os
-import pandas as pd
 
 # 📁 Dossier contenant les fichiers à concaténer
 dossier_source = os.path.join(racine, "data", "processed", "saison")
@@ -248,25 +247,20 @@ print(f"✅ Fichier concaténé mis à jour : {fichier_sortie} ({len(df_total)} 
 # ===========================================================
 # 📄 Script :  Mise à jour Calendrier Saison
 # ===========================================================
-import os
-import pandas as pd
-from nba_api.stats.endpoints.scheduleleaguev2 import ScheduleLeagueV2
-from dateutil import parser
-from time import sleep
-import pytz
 
 # 📅 Saison à saisir manuellement
 # saison = input("👉 Entrez la saison NBA au format 'YYYY-YY' (ex : 2024-25) : ").strip()
 league_id = "00"
 
-print(f"⏳ Récupération du calendrier pour la saison ...")
+print("⏳ Récupération du calendrier pour la saison ...")
 try:
     sleep(1)
-    calendrier = ScheduleLeagueV2(season="2025-26", league_id=league_id)
+    calendrier = ScheduleLeagueV2(season="2024-25", league_id=league_id)
     df = calendrier.get_data_frames()[0]
 except Exception as e:
     print("❌ Erreur lors de l’appel à l’API :", e)
     exit()
+
 
 # 🕒 Conversion UTC vers date/heure Paris
 def convertir_heure_paris(utc_string):
@@ -320,21 +314,17 @@ colonnes_presentes = [col for col in colonnes_utiles.keys() if col in df.columns
 df_clean = df[colonnes_presentes].rename(columns=colonnes_utiles)
 
 # 💾 Export final
-dossier_export = "data/processed/calendrier"
+dossier_export = os.path.join(racine, "data", "processed", "calendrier")
+fichier_sortie = os.path.join(dossier_export, "calendrier_saison.csv")
 os.makedirs(dossier_export, exist_ok=True)
-chemin_export = os.path.join(dossier_export, f"calendrier_saison.csv")
-df_clean.to_csv(chemin_export, index=False)
-# df.to_csv(chemin_export, index=False)
+df_clean.to_csv(fichier_sortie, index=False, encoding="utf-8")
 
-print(f"✅ Calendrier exporté : {chemin_export}")
+print(f"✅ Calendrier exporté : {fichier_sortie}")
 
 # ======================================
 # 📥 Récupération de la liste complète des joueurs NBA (nba_api)
 # ======================================
 # Ce script extrait tous les joueurs (actuels et historiques) depuis nba_api et exporte en CSV.
-
-import pandas as pd
-from nba_api.stats.static import players
 
 # ===============================
 # 1. Récupération des joueurs
@@ -352,14 +342,75 @@ noms_colonnes = {
     'last_name': 'nom',
     'is_active': 'actif'
 }
-# On ne renomme que si la colonne existe (compatibilité toutes versions)
 colonnes_existe = {k: v for k, v in noms_colonnes.items() if k in df_joueurs.columns}
 df_joueurs = df_joueurs.rename(columns=colonnes_existe)
 
+
 # ===============================
-# 3. Export en CSV
+# 3. Ajout de la colonne URL photo officielle NBA
 # ===============================
-chemin_export = "data/processed/static/joueurs_liste_nba.csv"
-df_joueurs.to_csv(chemin_export, index=False, encoding="utf-8")
+def generer_url_photo(id_joueur):
+    return f"https://cdn.nba.com/headshots/nba/latest/1040x760/{id_joueur}.png"
+
+
+df_joueurs["url_photo"] = df_joueurs["id_joueur"].apply(generer_url_photo)
+
+# ===============================
+# 4. Export en CSV
+# ===============================
+chemin_export = os.path.join(racine, "data", "processed", "static")
+fichier_sortie = os.path.join(chemin_export, "joueurs_liste_nba.csv")
+df_joueurs.to_csv(fichier_sortie, index=False, encoding="utf-8")
 
 print(f"✅ {len(df_joueurs)} joueurs exportés dans {chemin_export}")
+
+# ======================================
+# 📥 Récupération de la liste complète des équipes NBA (nba_api)
+# ======================================
+# Ce script extrait toutes les équipes (actuelles et historiques) depuis nba_api et exporte en CSV.
+# Les noms des colonnes sont traduits en français, le chemin d’export respecte la structure du projet.
+
+# ===============================
+# 1. Variables de chemin
+# ===============================
+racine = pathlib.Path(__file__).resolve().parents[2]
+chemin_export = os.path.join(racine, "data", "processed", "static")
+os.makedirs(chemin_export, exist_ok=True)
+fichier_sortie = os.path.join(chemin_export, "equipes_liste_nba.csv")
+
+# ===============================
+# 2. Récupération des équipes
+# ===============================
+equipes = teams.get_teams()
+df_equipes = pd.DataFrame(equipes)
+
+# ===============================
+# 3. Renommage des colonnes en français
+# ===============================
+noms_colonnes = {
+    'id': 'id_equipe',
+    'full_name': 'nom_complet',
+    'abbreviation': 'abbreviation',
+    'nickname': 'surnom',
+    'city': 'ville',
+    'state': 'etat',
+    'year_founded': 'annee_fondation'
+}
+colonnes_existe = {k: v for k, v in noms_colonnes.items() if k in df_equipes.columns}
+df_equipes = df_equipes.rename(columns=colonnes_existe)
+
+
+# ===============================
+# 4. Génération de l'URL du logo officiel NBA
+# ===============================
+def generer_url_logo(id_equipe):
+    return f"https://cdn.nba.com/logos/nba/{id_equipe}/global/L/logo.svg"
+
+
+df_equipes["url_logo"] = df_equipes["id_equipe"].apply(generer_url_logo)
+
+# ===============================
+# 5. Export en CSV
+# ===============================
+df_equipes.to_csv(fichier_sortie, index=False, encoding="utf-8")
+print(f"✅ {len(df_equipes)} équipes exportées dans {fichier_sortie} (avec url_logo)")

@@ -230,16 +230,16 @@ def afficher_calendrier():
     # Limite la dropdown aux mois effectivement présents
     mois_uniques = df[["annee", "mois"]].drop_duplicates().sort_values(["annee", "mois"]).values.tolist()
     options = []
+    
+    # Liste manuelle des mois avec accents pour un rendu parfait partout
+    mois_fr = [
+        "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+        "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
+    ]
+
+    options = []
     for annee, mois in mois_uniques:
-        mois_label = datetime(annee, mois, 1).strftime("%B %Y").capitalize()
-        mois_label = (mois_label
-            .replace("Fevrier", "Février")
-            .replace("Aout", "Août")
-            .replace("Decembre", "Décembre")
-            .replace("Mai", "Mai")
-            .replace("Juin", "Juin")
-            .replace("Juillet", "Juillet")
-        )
+        mois_label = f"{mois_fr[mois-1]} {annee}"
         options.append({"label": mois_label, "value": f"{annee}-{mois:02d}"})
 
     now = datetime.now()
