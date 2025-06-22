@@ -332,14 +332,28 @@ def afficher_calendrier_semaine(valeur_mois, prev_clicks, next_clicks, week_idx)
     # Gestion index semaine (callback dash pattern)
     ctx = dash.callback_context
     triggered = [t["prop_id"] for t in ctx.triggered]
-    if not triggered or "select_mois_calendrier" in triggered[0]:
-        week_idx = 0  # reset à chaque changement de mois
+    today = datetime.today()
+
+    # Détecte le "no-trigger" Dash, donc ouverture de la page
+    if not triggered or triggered[0] == "." or "select_mois_calendrier" in triggered[0]:
+        if today.year == annee and today.month == mois:
+            for idx, semaine in enumerate(semaines):
+                if today.day in semaine:
+                    week_idx = idx
+                    break
+            else:
+                week_idx = 0
+        else:
+            week_idx = 0
     elif "prev_week_btn" in triggered[0]:
-        week_idx = max(0, week_idx - 1)
+        week_idx = max(0, (week_idx or 0) - 1)
     elif "next_week_btn" in triggered[0]:
-        week_idx = min(len(semaines) - 1, week_idx + 1)
-    # Clamp l’index
+        week_idx = min(len(semaines) - 1, (week_idx or 0) + 1)
+
+    # Clamp au cas où
     week_idx = max(0, min(week_idx, len(semaines) - 1))
+
+    print(f"TRIGGERED: {triggered}, week_idx: {week_idx}, today: {today}, mois: {mois}, annee: {annee}")
 
     semaine = semaines[week_idx]
     jours_semaine = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
@@ -380,7 +394,7 @@ def afficher_calendrier_semaine(valeur_mois, prev_clicks, next_clicks, week_idx)
                         html.Span(" @ ", style={"color": "#ccc", "fontWeight": "bold"}),
                         html.Span(match['équipe_domicile'], style={"fontWeight": "bold", "color": "#fff", "fontSize": "1em"}),
                     ], style={"marginBottom": "2px"})
-                    arene = f"{match['Salle']} – {match['Ville_salle']} ({match['Etat_salle']})"
+                    arene = f"{match['Salle']}"
                     heure = match["Heure"]
                     competition = ""
                     if pd.notna(match["Compétition "]):

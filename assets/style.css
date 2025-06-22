@@ -755,3 +755,14 @@ p,
     box-shadow: 0 0 12px #0006;
   }
 }
+
+/* Pour tous les dcc.Dropdown */
+.Select-menu-outer, .Select-option, .Select-placeholder, .Select-value, .Select-control {
+    color: #222 !important;       /* Couleur du texte des options */
+    background-color: #eee !important;  /* Fond clair */
+}
+
+/* Optionnel : pour affiner selon l'état sélectionné */
+.Select.is-focused > .Select-control {
+    border-color: #5a5a5a !important;
+}
