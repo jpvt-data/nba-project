@@ -1,5 +1,11 @@
 # 📚 Récapitulatif de la doc **nba_api**
 
+https://github.com/swar/nba_api/tree/master/docs/nba_api/stats/endpoints
+
+https://github.com/swar/nba_api/blob/master/docs/nba_api/stats/library/data.md
+
+
+
 ## 1. Structure générale
 - **nba_api.stats**  
   - `endpoints/` : wrappers pour tous les endpoints officiels de stats NBA (boxscores, classements, totaux carrière, etc.)  
