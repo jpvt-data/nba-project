@@ -837,4 +837,30 @@ p,
     }
 }
 
+.banniere-verticale-saison {
+    width: 100%;
+    max-width: 130px;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 0 18px #1119;
+    margin-bottom: 20px;
+    object-fit: cover;
+    background: linear-gradient(180deg,#2d253e 0%,#0e0d0d 100%);
+}
+@media (max-width: 900px) {
+    .banniere-verticale-saison {
+        display: none !important;
+    }
+}
 
+.tableau-droite {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .tableau-droite {
+        justify-content: center;
+    }
+}

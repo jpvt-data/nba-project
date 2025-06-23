@@ -1398,4 +1398,4 @@ Saison,Date,Heure,Statut Match,gameId,Compétition ,Détail Compétition,# Match
 2024-25,14/06/25,02:30,Final,0042400404,NBA Finals,Game 4,Game 4,Series tied 2-2,false,Gainbridge Fieldhouse,Indianapolis,IN,,1610612754,1610612760,Pacers,Thunder,Indiana,Oklahoma City,IND,OKC,104,111,2025-06-14T00:30:00Z
 2024-25,17/06/25,02:30,Final,0042400405,NBA Finals,Game 5,Game 5,OKC leads 3-2,false,Paycom Center,Oklahoma City,OK,,1610612760,1610612754,Thunder,Pacers,Oklahoma City,Indiana,OKC,IND,120,109,2025-06-17T00:30:00Z
 2024-25,20/06/25,02:30,Final,0042400406,NBA Finals,Game 6,Game 6,Series tied 3-3,false,Gainbridge Fieldhouse,Indianapolis,IN,,1610612754,1610612760,Pacers,Thunder,Indiana,Oklahoma City,IND,OKC,108,91,2025-06-20T00:30:00Z
-2024-25,23/06/25,02:00,8:00 pm ET,0042400407,NBA Finals,Game 7,Game 7,Series tied 3-3,false,Paycom Center,Oklahoma City,OK,,1610612760,1610612754,Thunder,Pacers,Oklahoma City,Indiana,OKC,IND,0,0,2025-06-23T00:00:00Z
+2024-25,23/06/25,02:00,Final,0042400407,NBA Finals,Game 7,Game 7,OKC wins 4-3,false,Paycom Center,Oklahoma City,OK,,1610612760,1610612754,Thunder,Pacers,Oklahoma City,Indiana,OKC,IND,103,91,2025-06-23T00:00:00Z

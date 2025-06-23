@@ -414,3 +414,22 @@ df_equipes["url_logo"] = df_equipes["id_equipe"].apply(generer_url_logo)
 # ===============================
 df_equipes.to_csv(fichier_sortie, index=False, encoding="utf-8")
 print(f"✅ {len(df_equipes)} équipes exportées dans {fichier_sortie} (avec url_logo)")
+
+
+# ======================================
+# 🚀 Commit + push auto des fichiers modifiés
+# ======================================
+import subprocess
+
+try:
+    print("📦 Préparation commit Git...")
+    chemin_dossier = str(racine)
+    os.chdir(chemin_dossier)
+
+    subprocess.run(["git", "add", "data/"], check=True)
+    subprocess.run(["git", "commit", "-m", "🔁 Maj auto des données NBA"], check=True)
+    subprocess.run(["git", "pull", "--rebase", "--autostash"], check=True)
+    subprocess.run(["git", "push"], check=True)
+    print("✅ Commit & push réalisés avec succès.")
+except subprocess.CalledProcessError as e:
+    print(f"❌ Erreur Git : {e}")
