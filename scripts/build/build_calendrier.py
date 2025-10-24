@@ -17,7 +17,7 @@ league_id = "00"
 print(f"⏳ Récupération du calendrier pour la saison ...")
 try:
     sleep(1)
-    calendrier = ScheduleLeagueV2(season="2024-25", league_id=league_id)
+    calendrier = ScheduleLeagueV2(season="2025-26", league_id=league_id)
     df = calendrier.get_data_frames()[0]
 except Exception as e:
     print("❌ Erreur lors de l’appel à l’API :", e)
