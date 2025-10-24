@@ -14,7 +14,7 @@ import time
 os.makedirs("data", exist_ok=True)
 
 # 🔧 Durée paramétrable (par défaut : 3 jours, configurable avec JOURS_NBA)
-nb_jours = int(os.getenv("JOURS_NBA", 3))
+nb_jours = int(os.getenv("JOURS_NBA", 30))
 aujourd_hui = datetime.today()
 jours = [aujourd_hui + timedelta(days=i) for i in range(nb_jours)]
 
