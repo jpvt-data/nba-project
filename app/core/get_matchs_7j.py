@@ -19,18 +19,20 @@ mois_fr = {
 }
 
 def get_matchs_7j():
-    chemin_csv = "data/processed/matchs.csv"
+    # chemin_csv = "data/processed/matchs.csv"
+    chemin_csv = "data/matchs_a_venir.csv"
     df = pd.read_csv(chemin_csv)
 
+
     # 🕒 Conversion datetime (heure locale Paris)
-    df["datetime_paris"] = pd.to_datetime(df["dateParis"] + " " + df["heureParis"], format="%Y-%m-%d %H:%M")
+    df["datetime_paris"] = pd.to_datetime(df["date_paris"] + " " + df["heure_paris"], format="%Y-%m-%d %H:%M")
 
     # 📆 Maintenant (heure locale)
     maintenant = datetime.now()
 
     # 🔍 Filtrage : uniquement matchs à venir dans les 7 jours
     df = df[(df["datetime_paris"] > maintenant) & 
-            (df["datetime_paris"] <= maintenant + timedelta(days=14))]
+            (df["datetime_paris"] <= maintenant + timedelta(days=3))]
     
     # Tri par date
     df = df.sort_values("datetime_paris")
@@ -63,16 +65,16 @@ def get_matchs_7j():
         matchs = []
         for _, row in groupe.iterrows():
             match = {
-                "game_id": row["gameId"],
+                "game_id": row["game_id"],
                 "date": date_affichee,
-                "heure": row["heureParis"],
-                "home_id": row["homeTeamId"],
-                "away_id": row["awayTeamId"],
-                "home": row["homeTeamTricode"],
-                "away": row["awayTeamTricode"],
-                "series_game_number": row["seriesGameNumber"],
-                "game_label": row["gameLabel"],
-                "if_necessary": row["ifNecessary"]
+                "heure": row["heure_paris"],
+                "home_id": row["home_team_id"],
+                "away_id": row["away_team_id"],
+                "home": row["home_team_tricode"],
+                "away": row["away_team_tricode"],
+                "series_game_number": row["series_game_number"],
+                "game_label": row["game_label"],
+                "if_necessary": row["if_necessary"]
             }
             matchs.append(match)
 

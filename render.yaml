@@ -5,6 +5,6 @@ services:
     plan: free
     buildCommand: |
       pip install -r requirements.txt
-      python scripts/build_matchs_a_venir.py
+      python scripts/build/build_matchs_a_venir.py
     startCommand: python app/core/app.py
     autoDeploy: true

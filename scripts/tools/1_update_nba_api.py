@@ -27,7 +27,7 @@ print(f"📁 Chargement du fichier : {fichier_matchs_csv}")
 # 📅 Plage de dates à mettre à jour : de la veille jusqu'au 31 août
 aujourd_hui = datetime.now()
 date_debut_matchs = (aujourd_hui - timedelta(days=7)).date()
-date_fin_matchs = datetime(2025, 12, 31).date()
+date_fin_matchs = datetime(2026, 8, 31).date()
 dates_matchs = pd.date_range(date_debut_matchs, date_fin_matchs)
 print(f"📆 Intervalle de dates : {date_debut_matchs} → {date_fin_matchs} ({len(dates_matchs)} jours)")
 
